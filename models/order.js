@@ -13,6 +13,14 @@ class Order extends Base {
     const create_time = new Date().toISOString().slice(0, 19).replace('T', ' ');
     return this.insert({ order_id, order_status, create_time, product_id, seller_id, order_amount });
   }
+
+  // 以下是未实现的函数
+
+  // Get transaction history of an NFT 由productController调用
+  async getNFTTransactionHistory(nftId) {
+    // Implement DB query to fetch transaction history of a specific NFT using nftId
+  }
+
 }
 
 module.exports = new Order();
