@@ -27,6 +27,10 @@ class Base{
     return knex(this.table).where('id', '=', id).del();
   }
 
+  // 返回查询到的第一个元素
+  findBy(id, idName) {
+    return knex(this.table).where(idName, '=', id).first();
+  }
 }
 
 module.exports = Base;

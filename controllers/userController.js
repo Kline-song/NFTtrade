@@ -29,9 +29,14 @@ const userController = {
       return res.status(400).json({ code: 400, message: '用户名和密码为必填项。' });
     }
 
+    const userData = await User.getUserByUsername(username);
+    if (userData) {
+      return res.status(401).json({ code: 401, message: '该用户名已存在' });
+    }
+
     bcrypt.genSalt(saltRounds, (err, salt) => {
       if (err) {
-        console.error('生成延时出错：' + err.stack);
+        console.error('生成盐时出错：' + err.stack);
         return res.status(500).json({ code: 500, message: '无法处理密码。' });
       }
 
@@ -61,6 +66,7 @@ const userController = {
 
     try {
       const userData = await User.getUserByUsername(username);
+
       if (!userData) {
         return res.status(401).json({ code: 401, message: '用户名或密码不正确。' });
       }
