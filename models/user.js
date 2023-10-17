@@ -16,7 +16,7 @@ class User extends Base {
   }
 
   async getUserByUsername(username) {
-    return this.findBy('username', username);
+    return this.findBy(username, 'username');
   }
 }
 
