@@ -2,10 +2,11 @@
 
 const Base = require('./base');
 const uuid = require('uuid');
+const { findById } = require('./order');
 
 class User extends Base {
   // 定义参数默认值为 user 表
-  constructor(props = 'user'){
+  constructor(props = 'user') {
     super(props);
   }
 
@@ -18,6 +19,9 @@ class User extends Base {
   async getUserByUsername(username) {
     return this.findBy(username, 'username');
   }
-}
 
+  async findById(user_id) {
+    return this.where({ user_id }).find();
+  }
+}
 module.exports = new User();
