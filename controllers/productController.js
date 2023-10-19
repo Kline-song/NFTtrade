@@ -30,7 +30,8 @@ const productController = {
 
   // 以下为未实现的函数伪代码
 
-    // 展示商品
+  
+    // 展示全部商品
     showProduct: async function (req, res, next) { 
       try {
         const products = await Product.all();
