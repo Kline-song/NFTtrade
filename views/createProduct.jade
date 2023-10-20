@@ -1,20 +1,16 @@
+// views/createProduct.jade
 extends layout
 
 block content
-  h1 Upload Product
-
-  form(method="post", action="/createProduct")
-    div
-      label NFT Identifier:
-      input(type="text", name="nft_identifier", required)
-    div
-      label Product Name:
-      input(type="text", name="product_name")
-    div
-      label Product Description:
-      textarea(name="product_description")
-    div
-      label URL:
-      input(type="text", name="url", required)
-    div
-      input(type="submit", value="Upload Product")
+  h1 Upload a Product to IPFS
+  form(action='/createProduct' method='post' enctype='multipart/form-data')
+    label Choose a file:
+    input(type='file' name='uploadFile')
+    
+    label Product Name:
+    input(type='text' name='product_name')
+    
+    label Product Description:
+    textarea(name='product_description')
+    
+    input(type='submit' value='Upload')

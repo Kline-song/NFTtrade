@@ -1,36 +1,78 @@
 // productController
 
 const Product = require('../models/product.js');
-const Order = require('../models/order.js')
+const Order = require('../models/order.js');
+const pinFileToIPFS = require('../IPFS.js'); // 将文件上传至IPFS
+const axios = require('axios'); // 暂时仅用于与rchain接口交互
+const configs = require('../config'); // 引用配置文件
+const uuid = require('uuid'); // 用于模拟rchain的返回数据
 
 const productController = {
   // 通过nft_identifier, product_name, product_description将存入
   uploadProduct: async function (req, res, next) {
-    // 获取当前用户的 user_id
-    const owner_id = req.session.user_id;
-
-    // 获取上传的表单数据
-    const { nft_identifier, product_name, product_description, url} = req.body;
-
-    // 在这里你可以进行验证输入数据的逻辑，确保数据符合要求
-    if (!nft_identifier || !url) {
-      return res.status(400).json({ code: 400, message: 'nft_identifier或url不能为空' });
-    }
-    if (!owner_id || typeof owner_id !== 'string' || owner_id.length !== 36) {
-      return res.status(400).json({ code: 400, message: '您尚未登录！请登录后再上传物品' });
-    }
-    // 创建产品并存储到数据库
     try {
-        const productData = await Product.createProduct(nft_identifier, product_name, product_description, url, owner_id);
-        res.json({ code: 200, message: '产品上传成功', data: productData });
+      if (!req.file) {
+        return res.status(400).json({ code: 400, message: '文件未上传' });
+      }
+
+      const fileBuffer = req.file.buffer;
+      const IpfsHash = await pinFileToIPFS(fileBuffer, req.file.originalname);
+
+      if (!IpfsHash) {
+        return res.status(400).json({ code: 400, message: '上传IPFS失败!请重新上传文件' });
+      }
+
+      const IpfsGateway = configs.ipfs.gateway;
+      const url = IpfsGateway + IpfsHash;
+
+      // 获取当前用户的 user_id
+      const owner_id = req.session.user_id;
+
+      // 获取上传的表单数据
+      const { product_name, product_description } = req.body;
+
+      const nftData = {
+        name: product_name,
+        description: product_description,
+        Uri: url,
+        owner: owner_id
+      };
+      
+      // // 发送请求到rchain，创建NFT
+      // const rchainResponse = await axios.post('RCHAIN_NFT_CREATION_ENDPOINT', nftData);
+      // 以下为测试代码，仅用于在接口没有写出来之前测试使用
+      const rchainResponse = {
+        status: 200,
+        data: {
+          transaction_status: 'success',
+          nft_identifier: uuid.v4()
+        }
+      };      
+
+      // 检查HTTP响应状态
+      if (rchainResponse.status !== 200) {
+        const errorMsg = rchainResponse.data && rchainResponse.data.error ? rchainResponse.data.error : '未知错误';
+        return res.status(400).json({ code: 400, message: '与rchain交互时出错', detail: errorMsg });
+      }
+
+      const { transaction_status, nft_identifier } = rchainResponse.data;
+
+      // 检查返回的数据状态
+      if (transaction_status !== 'success' || !nft_identifier) {
+        const errorMsg = rchainResponse.data && rchainResponse.data.error ? rchainResponse.data.error : '未知错误';
+        return res.status(400).json({ code: 400, message: '创建nft_identifier失败', detail: errorMsg });
+      }
+
+      const productData = await Product.createProduct(nft_identifier, product_name, product_description, url, owner_id);
+      res.json({ code: 200, message: '产品上传成功', data: productData });
+
     } catch (error) {
-        res.status(500).json({ code: 500, message: '上传产品时发生错误', error: error.message });
+      res.status(500).json({ code: 500, message: '上传产品时发生错误', error: error.message });
     }
   },
 
   // 以下为未实现的函数伪代码
 
-  
     // 展示全部商品
     showProduct: async function (req, res, next) { 
       try {
