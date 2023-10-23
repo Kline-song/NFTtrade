@@ -4,31 +4,33 @@
 const User = require('../models/user.js');
 const bcrypt = require('bcryptjs');
 
-const saltRounds = 10; 
+const saltRounds = 10;
 
 const userController = {
   // showUser 获取用户数据并返回到页面
-  showUser: async function(req,res,next){
-    try{
+  showUser: async function (req, res, next) {
+    try {
       let userData = await User.all()
       res.json({
         code: 200,
         message: "操作成功",
         data: userData
       })
-    }catch(e){
+    } catch (e) {
       res.json({ code: 0, message: "操作失败", data: e })
     }
   },
-  
+
   // 用户注册
   registerUser: async function (req, res, next) {
-    const { username, password } = req.body;
+    const { username, password, confirmPassword } = req.body;
 
-    if (!username || !password) {
+    if (!username || !password || !confirmPassword) {
       return res.status(400).json({ code: 400, message: '用户名和密码为必填项。' });
     }
-
+    if (password !== confirmPassword) {
+      return res.status(400).json({ code: 400, message: '两次输入的密码不一致。' });
+    }
     const userData = await User.getUserByUsername(username);
     if (userData) {
       return res.status(401).json({ code: 401, message: '该用户名已存在' });
@@ -75,7 +77,7 @@ const userController = {
       if (match) {
         // 在登录成功后将 user_id 存储到会话中
         req.session.user_id = userData.user_id;
-        
+
         res.json({ code: 200, message: '登录成功！', data: userData });
       } else {
         return res.status(401).json({ code: 401, message: '用户名或密码不正确。' });
