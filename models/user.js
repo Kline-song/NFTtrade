@@ -16,12 +16,9 @@ class User extends Base {
     return this.insert({ user_id, username, password, currency });
   }
 
-  async getUserByUsername(username) {
+  async findByUsername(username) {
     return this.findBy(username, 'username');
   }
 
-  async findById(user_id) {
-    return this.where({ user_id }).find();
-  }
 }
 module.exports = new User();
