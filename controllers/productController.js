@@ -37,7 +37,7 @@ const productController = {
         Uri: url,
         owner: owner_id
       };
-      
+
       // // 发送请求到rchain，创建NFT
       // const rchainResponse = await axios.post('RCHAIN_NFT_CREATION_ENDPOINT', nftData);
       // 以下为测试代码，仅用于在接口没有写出来之前测试使用
@@ -47,7 +47,7 @@ const productController = {
           transaction_status: 'success',
           nft_identifier: uuid.v4()
         }
-      };      
+      };
 
       // 检查HTTP响应状态
       if (rchainResponse.status !== 200) {
@@ -64,7 +64,7 @@ const productController = {
       }
 
       const productData = await Product.createProduct(nft_identifier, product_name, product_description, url, owner_id);
-      res.json({ code: 200, message: '产品上传成功', data: productData });
+      res.status(200).json({ code: 200, message: '产品上传成功', data: productData });
 
     } catch (error) {
       res.status(500).json({ code: 500, message: '上传产品时发生错误', error: error.message });
@@ -73,70 +73,80 @@ const productController = {
 
   // 以下为未实现的函数伪代码
 
-    // 展示全部商品
-    showProduct: async function (req, res, next) { 
-      try {
-        const products = await Product.all();
-        res.json({ code: 200, message: '获取成功', data: products });
-      } catch (error) {
-        res.status(500).json({ code: 500, message: '获取产品时发生错误', error: error.message });
-      }
-    },
+  // 展示全部商品
+  showProduct: async function (req, res, next) {
+    try {
+      const products = await Product.all();
+      res.status(200).json({ code: 200, message: '获取成功', data: products });
+    } catch (error) {
+      res.status(500).json({ code: 500, message: '获取产品时发生错误', error: error.message });
+    }
+  },
 
-    //查看单个NFT详情 (Get details of a single NFT)
-    getNFTDetails: async function (req, res, next) {
-      const nftId = req.params.id;
-      try {
-          const nftDetails = await Product.getNFTDetails(nftId);
-          res.json({ code: 200, data: nftDetails });
-      } catch (error) {
-          // Handle error
-      }
-    },
+  //查看单个商品详情 (Get details of a single product)
+  getProductDetails: async function (req, res, next) {
+    const productId = req.params.id;
+    try {
+      const productDetails = await Product.findById(productId);
+      res.status(200).json({ code: 200, data: productDetails });
+    } catch (error) {
+      res.status(500).json({ code: 500, message: '获取单个产品时发生错误', error: error.message });
+    }
+  },
 
-    // 列出用户的NFTs(List NFTs owned by a user)
-    listUserNFTs: async function (req, res, next) {
-      const userId = req.session.user_id;
-      try {
-          const nfts = await Product.listUserNFTs(userId);
-          res.json({ code: 200, data: nfts });
-      } catch (error) {
-          // Handle error
-      }
-    },
+  // 列出用户的products(List products owned by a user)
+  listUserProducts: async function (req, res, next) {
+    // 涉及到用户id的使用，路由中应该加入登录检查中间件
+    const userId = req.session.user_id;
+    try {
+      const products = await Product.listBy({ owner_id: userId });
+      res.status(200).json({ code: 200, data: products });
+    } catch (error) {
+      res.status(500).json({ code: 500, message: '获取用户产品时发生错误', error: error.message });
+    }
+  },
 
-    // 列出用户发布的待售NFTs (List NFTs for sale by a user)
-    listUserSaleNFTs: async function (req, res, next) {
-      const userId = req.session.user_id;
-      try {
-          const nftsForSale = await Product.listUserSaleNFTs(userId);
-          res.json({ code: 200, data: nftsForSale });
-      } catch (error) {
-          // Handle error
-      }
-    },
+  // 列出用户发布的待售products (List products for sale by a user)
+  listUserSaleNFTs: async function (req, res, next) {
+    // 涉及到用户id的使用，路由中应该加入登录检查中间件
+    const userId = req.session.user_id;
+    try {
+      // 获取当前用户作为卖家的全部订单
+      const orders = await Order.listBy({ seller_id: userId });
 
-    // 查看NFT的交易历史 (View transaction history of an NFT)
-    getNFTTransactionHistory: async function (req, res, next) {
-      const nftId = req.params.id;
-      try {
-          const transactionHistory = await Order.getNFTTransactionHistory(nftId);
-          res.json({ code: 200, data: transactionHistory });
-      } catch (error) {
-          // Handle error
-      }
-    },
+      // 将待售物品id提取出来放入一个数组中
+      const productIdsForSale = orders.map(o => o.product_id);
 
-    // 搜索NFT (Search for NFTs)
-    searchNFTs: async function (req, res, next) {
-      const query = req.query.q;
-      try {
-          const searchResults = await Product.searchNFTs(query);
-          res.json({ code: 200, data: searchResults });
-      } catch (error) {
-          // Handle error
-      }
-    },
+      // Fetch all products using the extracted product_ids
+      const productsForSale = await Product.listByIdArray({ product_id: productIdsForSale });
+
+      res.status(200).json({ code: 200, data: productsForSale });
+    } catch (error) {
+      res.status(500).json({ code: 500, message: '获取用户待售产品时发生错误', error: error.message });
+    }
+  },
+
+  // // 查看NFT的交易历史 (View transaction history of an NFT)
+  // getNFTTransactionHistory: async function (req, res, next) {
+  //   const nftId = req.params.id;
+  //   try {
+  //       const transactionHistory = await Order.getNFTTransactionHistory(nftId);
+  //       res.json({ code: 200, data: transactionHistory });
+  //   } catch (error) {
+  //       // Handle error
+  //   }
+  // },
+
+  // // 搜索NFT (Search for NFTs)
+  // searchNFTs: async function (req, res, next) {
+  //   const query = req.query.q;
+  //   try {
+  //       const searchResults = await Product.searchNFTs(query);
+  //       res.json({ code: 200, data: searchResults });
+  //   } catch (error) {
+  //       // Handle error
+  //   }
+  // },
 }
 
 module.exports = productController;

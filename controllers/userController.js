@@ -28,6 +28,7 @@ const userController = {
     if (!username || !password || !confirmPassword) {
       return res.status(400).json({ code: 400, message: '用户名和密码为必填项。' });
     }
+
     if (password !== confirmPassword) {
       return res.status(400).json({ code: 400, message: '两次输入的密码不一致。' });
     }
@@ -67,7 +68,7 @@ const userController = {
     }
 
     try {
-      const userData = await User.getUserByUsername(username);
+      const userData = await User.findByUsername(username);
 
       if (!userData) {
         return res.status(401).json({ code: 401, message: '用户名或密码不正确。' });
