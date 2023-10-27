@@ -36,6 +36,9 @@ router.get('/createProduct', function (req, res, next) {
 
 router.post('/createProduct', checkLogin, upload.single('uploadFile'), productController.uploadProduct);
 
+// 展示用户全部物品
+router.get('/showProduct', checkLogin, productController.listUserProducts);
+
 //创建订单
 router.get('/createOrder', orderController.createOrder);
 

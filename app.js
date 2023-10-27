@@ -30,16 +30,16 @@ app.use(session({
   secret: secretKey,
   resave: false,
   saveUninitialized: true,
-  // 可以根据你的需求进行配置
 }));
 
 //设置跨域访问
 app.all('*', function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Origin", req.headers.origin); // 动态获取origin
   res.header("Access-Control-Allow-Headers", "Content-Type, X-Requested-With");
   res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
+  res.header("Access-Control-Allow-Credentials", "true"); // 添加该行使得跨域请求时带上cookie
   res.header("X-Powered-By", ' 3.2.1')
-  res.header("Content-Type", "application/json;charset=utf-8");
+  // res.header("Content-Type", "application/json;charset=utf-8"); // 删除本行，否则会出现网页显示源代码的情况
   next();
 });
 

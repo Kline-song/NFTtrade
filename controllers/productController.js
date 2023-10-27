@@ -71,7 +71,6 @@ const productController = {
     }
   },
 
-  // 以下为未实现的函数伪代码
 
   // 展示全部商品
   showProduct: async function (req, res, next) {
@@ -96,7 +95,6 @@ const productController = {
 
   // 列出用户的products(List products owned by a user)
   listUserProducts: async function (req, res, next) {
-    // 涉及到用户id的使用，路由中应该加入登录检查中间件
     const userId = req.session.user_id;
     try {
       const products = await Product.listBy({ owner_id: userId });
