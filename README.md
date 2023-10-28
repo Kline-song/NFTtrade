@@ -4,35 +4,35 @@ NFTtrade是一个专门为软件体系结构与设计模式课程大作业的NFT
 ## 环境配置
 
 ### 1. 安装Node.js
-请确保你已安装Node.js的最新LTS版本。如果没有安装，请访问[node.js官方网站](https://nodejs.org/)下载并安装。
+请确保你已安装Node.js的18.18.0的LTS版本。如果没有安装，请访问[node.js官方网站](https://nodejs.org/)下载并安装。
 
 ### 2. 安装全局依赖
 在终端中运行以下命令来全局安装Express框架及其关键模块：
 ```bash
 npm install -g express body-parser cookie-parser multer
 ```
+在终端中运行相关命令来全局安装vue
 
 ### 3. 数据库配置
 - 安装MySQL数据库。
 - 根据项目中提供的sql文件，创建名为`nftback`的数据库。
-
-### 4. 安装项目依赖
-在项目的根目录下运行以下命令来安装所有依赖：
-```bash
-npm install
-```
-
-### 5. 数据库连接配置
 打开`config.js`文件，并将数据库连接信息修改为你的本地数据库配置。
 
 ## 运行方法
 
 1. 在项目的根目录下运行：
 ```bash
+npm install
 npm start
 ```
 
-2. 成功运行后，在浏览器中访问`localhost:3000`，并添加正确的路由如`/register`来访问相关页面。
+2. 在NFTvue目录下运行：
+```bash
+npm install
+npm run dev
+```
+
+3. 成功运行后，在浏览器中访问vue终端给出的地址，并添加正确的路由如`/register`来访问相关页面。
 
 ## 上传代码和合作流程
 
@@ -42,3 +42,8 @@ npm start
 2. 完成开发后，推送你的分支到远程仓库。
 3. 从你的分支创建一个Pull Request到`main`分支。
 4. 请其他团队成员进行代码审查，确保没有问题后，合并到`main`分支。
+
+## 代码撰写规范
+
+请在使用涉及到数据库中的相关属性时，例如product_id，nft_identifier等，请确保变量名与数据库中的属性一致。
+如果不清楚表中属性的含义或需要增添更多属性，请与相关人员进行沟通。
