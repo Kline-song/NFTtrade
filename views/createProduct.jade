@@ -4,8 +4,11 @@ extends layout
 block content
   h1 Upload a Product to IPFS
   form(action='/createProduct' method='post' enctype='multipart/form-data')
-    label Choose a file:
-    input(type='file' name='uploadFile')
+    label Choose a metadata file:
+    input(type='file' name='metadata')
+    
+    label Choose a cover image:
+    input(type='file' name='coverImage')
     
     label Product Name:
     input(type='text' name='product_name')

@@ -8,19 +8,23 @@ const JWT = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaW
 
 // 后续应在async ()中添加的参数：File name
 const pinFileToIPFS = async (fileBuffer, fileName) => {
+  // // 检查传入的参数是否正确
+  // console.log('File buffer:', fileBuffer);
+  // console.log('File name:', fileName);
+
   // formData就是需要我们传给IPFS的数据对象
   const formData = new FormData();
-  
+
   // 使用 Buffer 对象而不是从磁盘读取的文件流
   formData.append('file', fileBuffer, { filename: fileName });
-    
+
   // 构建包含文件的元数据的JSON字符串（pinataMetadata变量），并将其添加到表单数据中
   // 这里暂时只给出了文件名称
   const pinataMetadata = JSON.stringify({
     name: fileName, // 使用传入的文件名
   });
   formData.append('pinataMetadata', pinataMetadata);
-  
+
   // 指定文件的CID版本，无需对其进行改动
   const pinataOptions = JSON.stringify({
     cidVersion: 0,
@@ -35,7 +39,7 @@ const pinFileToIPFS = async (fileBuffer, fileName) => {
         'Authorization': `Bearer ${JWT}`
       }
     });
-    
+
     // 如果请求成功并且res.data中有IpfsHash属性，返回这个哈希值
     if (res.data && res.data.IpfsHash) {
       return res.data.IpfsHash;
@@ -45,7 +49,8 @@ const pinFileToIPFS = async (fileBuffer, fileName) => {
     return null;
 
   } catch (error) {
-    console.log(error);
+    console.error('Error:', error.message);
+    console.error('Error details:', error);
     return null; // 或者可以返回错误消息，如return error.message;
   }
 }

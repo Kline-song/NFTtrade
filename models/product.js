@@ -7,9 +7,9 @@ class Product extends Base {
     super(props);
   }
 
-  async createProduct(nft_identifier, product_name, product_description, url, owner_id) {
+  async createProduct(nft_identifier, product_name, product_description, metaData_url, coverImage_url, owner_id) {
     const product_id = uuid.v4(); // 生成唯一的 product_id
-    return this.insert({ product_id, nft_identifier, product_name, product_description, url, owner_id }); // 此处没有插入buyer_id，应该会默认设为NULL，但如果插入出错可以检查这里
+    return this.insert({ product_id, nft_identifier, product_name, product_description, metaData_url, coverImage_url, owner_id }); // 此处没有插入buyer_id，应该会默认设为NULL，但如果插入出错可以检查这里
   }
 
   // List NFTs owned by a user

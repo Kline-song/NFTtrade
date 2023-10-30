@@ -34,7 +34,7 @@ router.get('/createProduct', function (req, res, next) {
   res.render('createProduct'); // 'productForm' 是你的jade/pug视图文件的名称
 });
 
-router.post('/createProduct', checkLogin, upload.single('uploadFile'), productController.uploadProduct);
+router.post('/createProduct', checkLogin, upload.fields([{ name: 'metadata' }, { name: 'coverImage' }]),productController.uploadProduct);
 
 // 展示用户全部物品
 router.get('/showProduct', checkLogin, productController.listUserProducts);
