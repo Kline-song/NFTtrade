@@ -8,7 +8,7 @@
   <div class="product-details">
     <div class="product-info">
       <div class="product-image">
-        <img src="../../public/images/pic1.jpg" alt="Product Image">
+        <img src={{product.image}} alt="Product Image">
       </div>
       <div class="product-summary">
         <h2>{{ product.name }}</h2>
@@ -49,6 +49,7 @@
     <div class="product-description">
       <h3>商品详情</h3>
       <p>{{ product.details }}</p>
+      <img src={{product.image}} alt="Product Image">
     </div>
   </div>
 
@@ -68,7 +69,7 @@ export default {
     return {
       product: {
         name: 'Product Name',
-        image: 'path/to/product/image.jpg',
+        image: '../../public/images/pic1.jpg',
         description: 'Product Description',
         price: '$99.99',
         details: 'Product Details'

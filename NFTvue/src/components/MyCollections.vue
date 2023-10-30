@@ -4,7 +4,11 @@
     <div class="sell">
       <button class="sellbtn2" @click="Seller2">上传本地藏品</button>
       <el-dialog v-model="showModal2" title="填写商品信息" @close="showModal2 = false">
-        <el-button class="sellbtn" type="primary" @click="uploadImage">上传文件</el-button>
+        <img :src="coverImage" alt="Cover Image" v-if="coverImage" class="cover-image">
+        <el-button class="sellbtn" type="primary" @click="uploadCollection">上传文件</el-button>
+        <el-button class="sellbtn" type="primary" @click="uploadImage">上传封面</el-button>
+        <div v-if="fileType !== null">文件类型: {{ fileType }}</div>
+
         <div>
         </div>
         <el-form>
@@ -66,13 +70,16 @@ export default {
   name: 'MyCollections',
   data() {
     return {
+      coverImage: '',
       showModal2: false,
       showModal1: false,
       productName: '',
       price: '',
       productDescription: '',
       image: null,// 上传的图片
-      collection: []
+      collection: [],
+      fileType: null,
+      metaData: null,
     };
   },
   created() {
@@ -98,7 +105,9 @@ export default {
     },
     Seller2() {
       this.showModal2 = true;
-      this.image = null;
+      this.coverImage = null;
+      this.fileType=null;
+      this.metaData=null;
     },
     sellProduct() {
       // 执行出售商品的逻辑
@@ -111,24 +120,52 @@ export default {
       else if (this.showModal2 == true) {
         this.showModal2 = false;
       }
-
     },
-    uploadImage() {
-      // 创建一个input元素，用于选择本地图片
+    uploadCollection() {
       const input = document.createElement('input');
       input.type = 'file';
       input.accept = '';
       input.onchange = (event) => {
         if (event.target.files && event.target.files[0]) {
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            this.image = e.target.result; // 将选择的图片保存到image属性中
-          };
-          reader.readAsDataURL(event.target.files[0]);
+          const file = event.target.files[0];
+          let fileType = 4;
+          let metaData = file; // 将 file 对象赋值给 metaData 属性
+
+          if (file.type.startsWith('image/')) {
+            fileType = 1; // 图片类型
+          } else if (file.type.startsWith('video/')) {
+            fileType = 2; // 视频类型
+          } else if (file.type.startsWith('audio/')) {
+            fileType = 3; // 音频类型
+          }
+
+          this.fileType = fileType;
+          this.metaData = metaData; // 将 metaData 的值赋给组件的数据属性
         }
       };
       input.click();
     },
+    uploadImage() {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*'; // 只允许上传图片文件
+      input.onchange = (event) => {
+        if (event.target.files && event.target.files[0]) {
+          const file = event.target.files[0];
+          if (file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              this.coverImage = e.target.result; // 将上传的图片设置为cover的源
+            };
+            reader.readAsDataURL(file);
+          } else {
+            alert('请上传图片文件！');
+          }
+        }
+      };
+      input.click();
+    }
+
   },
 };
 </script>
@@ -173,5 +210,10 @@ export default {
   background-color: rgba(177, 25, 26, 1);
   border: none;
   border-radius: 10px;
+}
+
+.cover-image{
+  width: 200px;
+  height: 200px;
 }
 </style>
