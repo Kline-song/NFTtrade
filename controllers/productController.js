@@ -6,24 +6,51 @@ const pinFileToIPFS = require('../IPFS.js'); // 将文件上传至IPFS
 const axios = require('axios'); // 暂时仅用于与rchain接口交互
 const configs = require('../config'); // 引用配置文件
 const uuid = require('uuid'); // 用于模拟rchain的返回数据
+const path = require('path'); // 用于处理文件路径
+const fs = require('fs'); // 
 
 const productController = {
-  // 通过nft_identifier, product_name, product_description将存入
+  // 上传产品
   uploadProduct: async function (req, res, next) {
+    // // 测试代码
+    // console.log(req.files);  // 打印文件对象
+    // console.log(req.body);   // 打印表单数据
+
     try {
-      if (!req.file) {
+      if (!req.files || Object.keys(req.files).length === 0) {
         return res.status(400).json({ code: 400, message: '文件未上传' });
       }
 
-      const fileBuffer = req.file.buffer;
-      const IpfsHash = await pinFileToIPFS(fileBuffer, req.file.originalname);
+      // 处理NFT元数据文件
+      const metaDataFile = req.files.metadata[0];
 
-      if (!IpfsHash) {
+
+      // // 测试代码
+      // console.log('req.files:', req.files);
+      // console.log('req.files.metadata:', req.files.metadata);
+
+      if (!metaDataFile) {
+        return res.status(400).json({ code: 400, message: '元数据文件未上传' });
+      }
+      const metaDataBuffer = metaDataFile.buffer;
+      const metaDataIpfsHash = await pinFileToIPFS(metaDataBuffer, metaDataFile.originalname);
+
+      if (!metaDataIpfsHash) {
         return res.status(400).json({ code: 400, message: '上传IPFS失败!请重新上传文件' });
       }
 
-      const IpfsGateway = configs.ipfs.gateway;
-      const url = IpfsGateway + IpfsHash;
+      // 处理封面图片文件
+      const coverImageFile = req.files.coverImage[0];
+      if (!coverImageFile) {
+        return res.status(400).json({ code: 400, message: '封面图片文件未上传' });
+      }
+
+      const coverImage_path = path.join(__dirname, '..', 'public', 'covers', coverImageFile.originalname);
+      await fs.promises.writeFile(coverImage_path, coverImageFile.buffer);
+      const coverImage_url = '/covers/' + coverImageFile.originalname;
+
+      const metaDataIpfsGateway = configs.ipfs.gateway;
+      const metaData_url = metaDataIpfsGateway + metaDataIpfsHash;
 
       // 获取当前用户的 user_id
       const owner_id = req.session.user_id;
@@ -34,11 +61,11 @@ const productController = {
       const nftData = {
         name: product_name,
         description: product_description,
-        Uri: url,
+        uri: metaData_url,
         owner: owner_id
       };
 
-      // // 发送请求到rchain，创建NFT
+      // 发送请求到rchain，创建NFT
       // const rchainResponse = await axios.post('RCHAIN_NFT_CREATION_ENDPOINT', nftData);
       // 以下为测试代码，仅用于在接口没有写出来之前测试使用
       const rchainResponse = {
@@ -63,14 +90,14 @@ const productController = {
         return res.status(400).json({ code: 400, message: '创建nft_identifier失败', detail: errorMsg });
       }
 
-      const productData = await Product.createProduct(nft_identifier, product_name, product_description, url, owner_id);
+      const productData = await Product.createProduct(nft_identifier, product_name, product_description, metaData_url, coverImage_url, owner_id);
       res.status(200).json({ code: 200, message: '产品上传成功', data: productData });
 
     } catch (error) {
+      console.error(error);  // 这会输出完整的错误堆栈到控制台
       res.status(500).json({ code: 500, message: '上传产品时发生错误', error: error.message });
     }
   },
-
 
   // 展示全部商品
   showProduct: async function (req, res, next) {
