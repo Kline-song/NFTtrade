@@ -1,5 +1,6 @@
 const Base = require('./base');
 const uuid = require('uuid');
+const knex = require('../models/knex');
 
 class Order extends Base {
   // 定义参数默认值为 order 表
@@ -22,6 +23,22 @@ class Order extends Base {
   }
   async findById(order_id) {
     return this.where({ order_id }).find();
+  }
+  async findOrdersByStatus(status) {
+    try {
+      const orders = await knex('order').where({ order_status: status });
+      return orders;
+    } catch (err) {
+      throw err;
+    }
+  }
+  async findOrdersByProductId(product_id) {
+    try {
+      const orders = await knex('order').where({ product_id });
+      return orders;
+    } catch (err) {
+      throw err;
+    }
   }
 }
 

@@ -1,5 +1,6 @@
 const Base = require('./base');
 const uuid = require('uuid');
+const knex = require('../models/knex');
 
 class Product extends Base {
   // 定义参数默认值为 product 表
@@ -35,6 +36,16 @@ class Product extends Base {
   async listByIdArray(params) {
     return this.whereIn('product_id', params.product_id).select();
   }
+
+  async findProductsByIds(productIds) {
+    try {
+      const products = await knex('product').whereIn('product_id', productIds);
+      return products;
+    } catch (err) {
+      throw err;
+    }
+  }
+
 }
 
 module.exports = new Product();

@@ -109,14 +109,45 @@ const productController = {
     }
   },
 
+  //展示待出售的全部商品
+  listProductsForSale: async function (req, res, next) {
+    try {
+      const orders = await Order.findOrdersByStatus(1);
+      console.log(orders);
+      const productIds = orders.map(order => order.product_id);
+      console.log(productIds);
+      let products = await Product.findProductsByIds(productIds);
+      products = products.map(product => {
+        const correspondingOrder = orders.find(order => order.product_id === product.product_id);
+        if (correspondingOrder) {
+          product.order_amount = correspondingOrder.order_amount;
+        }
+        return product;
+      });
+      console.log(products);
+      res.json(products);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  },
   //查看单个商品详情 (Get details of a single product)
   getProductDetails: async function (req, res, next) {
     const productId = req.params.id;
     try {
       const productDetails = await Product.findById(productId);
-      res.status(200).json({ code: 200, data: productDetails });
+      console.log(productDetails);
+      if (!productDetails) {
+        // 如果没有找到产品，返回 404 状态码
+        res.status(404).send({ message: 'Product not found' });
+      } else {
+        // 如果找到了产品，返回产品数据
+        res.send(productDetails);
+      }
     } catch (error) {
-      res.status(500).json({ code: 500, message: '获取单个产品时发生错误', error: error.message });
+      // 如果有错误，返回 500 状态码和错误信息
+      console.error(error);
+      res.status(500).send({ message: 'Server error' });
     }
   },
 
