@@ -8,15 +8,15 @@
   <div class="product-details">
     <div class="product-info">
       <div class="product-image">
-        <img src="../../public/images/pic1.jpg" alt="Product Image">
+        <img :src="product.coverImage_url" alt="Product image">
       </div>
       <div class="product-summary">
-        <h2>{{ product.name }}</h2>
+        <h2>{{ product.product_name }}</h2>
         <div class="product-price">
           <span class="price-label">Price:</span>
-          <span class="price-value">{{ product.price }}</span>
+          <span class="price-value">{{ this.$route.params.order_amount }}</span>
         </div>
-        <p>{{ product.description }}</p>
+        <p>{{ product.product_description }}</p>
         <div>
           <label for="quantity">购买数量:</label>
           <select id="quantity">
@@ -48,7 +48,7 @@
     </div>
     <div class="product-description">
       <h3>商品详情</h3>
-      <p>{{ product.details }}</p>
+      <iframe v-if="product && product.metaData_url" :src="product.metaData_url" width="600" height="400"></iframe>
     </div>
   </div>
 
@@ -60,21 +60,25 @@
 
 <script>
 import Header from '@/components/Header.vue';
+import axios from 'axios';
 export default {
   components: {
     Header
   },
   data() {
     return {
-      product: {
-        name: 'Product Name',
-        image: 'path/to/product/image.jpg',
-        description: 'Product Description',
-        price: '$99.99',
-        details: 'Product Details'
-      },
-      inputValue: '',
+      product: null,
     };
+  },
+  async created() {
+    const productId = this.$route.params.product_id;
+    console.log('productId:', productId);
+    try {
+      const response = await axios.get(`http://localhost:3000/product/${productId}`);
+      this.product = response.data;
+    } catch (error) {
+      console.error(error);
+    }
   },
   methods: {
     addToCart() {
@@ -139,7 +143,7 @@ nav ul li a {
   display: flex;
   flex-direction: column;
   text-align: center;
-  width:300px;
+  width: 300px;
 }
 
 .product-price {
@@ -148,26 +152,28 @@ nav ul li a {
 
 .buy-btn {
   margin-top: 15px;
-  color:white;
-  background-color: rgba(177, 25, 26,1);
+  color: white;
+  background-color: rgba(177, 25, 26, 1);
   border: none;
   width: 75%;
-  height:30px;
+  height: 30px;
   display: block;
   margin-left: auto;
   margin-right: auto;
   border-radius: 10px;
 }
-.buy-btn:hover{
-  background-color:rgba(177, 25, 26,0.35) ;
+
+.buy-btn:hover {
+  background-color: rgba(177, 25, 26, 0.35);
 }
 
 .product-description {
   text-align: center;
   background-color: #f2f2f2;
-  width:900px;
-  height:500px;
+  width: 900px;
+  height: 500px;
 }
+
 #quantity {
   /* 添加自定义样式 */
   border: 1px solid #ccc;
@@ -179,7 +185,7 @@ nav ul li a {
 #quantity:focus {
   /* 点击时的样式 */
   outline: none;
-  box-shadow: 0 0 5px 2px rgba(177, 25, 26,0.6);
+  box-shadow: 0 0 5px 2px rgba(177, 25, 26, 0.6);
 }
 
 #quantity option:hover {
@@ -187,5 +193,4 @@ nav ul li a {
   background-color: red;
   color: white;
 }
-
 </style>

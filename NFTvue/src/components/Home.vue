@@ -1,6 +1,6 @@
 <template>
   <div class="header">
-  <Header :input-value="inputValue" @update:input-value="inputValue = $event" @search="searchItems" />
+    <Header :input-value="inputValue" @update:input-value="inputValue = $event" @search="searchItems" />
   </div>
   <!-- 此处为页面内容 -->
   <div>
@@ -8,14 +8,14 @@
 
     <div class="content">
       <h2 class="titles">
-        <a href="#">全部商品分类  </a>
-        <a href="#">为你推荐  </a>
-        <a href="#">绘画  </a>
-        <a href="#">摄影  </a>
-        <a href="#">音乐  </a>
+        <a href="#">全部商品分类 </a>
+        <a href="#">为你推荐 </a>
+        <a href="#">绘画 </a>
+        <a href="#">摄影 </a>
+        <a href="#">音乐 </a>
         <a href="#">视频</a>
-        <a href="#">游戏物品  </a>
-        <a href="#">虚拟地产  </a>
+        <a href="#">游戏物品 </a>
+        <a href="#">虚拟地产 </a>
         <a href="#">元宇宙资产</a>
       </h2>
       <hr class="line">
@@ -26,25 +26,25 @@
         <div class="content2">
           <div class="categories">
             <div class="category">
-              <a href="#">绘画  </a>
+              <a href="#">绘画 </a>
             </div>
             <div class="category">
-              <a href="#">摄影  </a>
+              <a href="#">摄影 </a>
             </div>
             <div class="category">
-              <a href="#">音乐  </a>
+              <a href="#">音乐 </a>
             </div>
             <div class="category">
-              <a href="#">视频  </a>
+              <a href="#">视频 </a>
             </div>
             <div class="category">
-              <a href="#">游戏物品  </a>
+              <a href="#">游戏物品 </a>
             </div>
             <div class="category">
-              <a href="#">虚拟地产  </a>
+              <a href="#">虚拟地产 </a>
             </div>
             <div class="category">
-              <a href="#">元宇宙资产  </a>
+              <a href="#">元宇宙资产 </a>
             </div>
             <router-link to="/product">（先查看一个商品）</router-link>
           </div>
@@ -53,24 +53,24 @@
             <class id="photos">
               <div class="photo">
                 <button class="arrow left" @click="previousPhoto">&#8249;</button>
-                <img :src="currentPhoto" alt="Photo" style="width: 500px; height: 400px;" class="pictures"/>
+                <img :src="currentPhoto" alt="Photo" style="width: 500px; height: 400px;" class="pictures" />
                 <button class="arrow right" @click="nextPhoto">&#8250;</button>
               </div>
             </class>
           </div>
           <div class="categories">
             <div class="category2">
-            <div class="avatar">
-              <img src="../../public/images/avatar.png" alt="Avatar">
-            </div>
-            <div class="user-id">Hi, {{ userId }}</div>
-            <div class="button-container">
-              <button @click="goToMyCollections">我的藏品</button>
-              <button @click="goToMyWallet">我的钱包</button>
-              <button @click="goToMyOrder">我的订单</button>
+              <div class="avatar">
+                <img src="../../public/images/avatar.png" alt="Avatar">
+              </div>
+              <div class="user-id">Hi, {{ userId }}</div>
+              <div class="button-container">
+                <button @click="goToMyCollections">我的藏品</button>
+                <button @click="goToMyWallet">我的钱包</button>
+                <button @click="goToMyOrder">我的订单</button>
+              </div>
             </div>
           </div>
-        </div>
         </div>
 
 
@@ -80,10 +80,12 @@
         </div>
 
         <div class="content-grid">
-          <div v-for="(item, index) in products" :key="index" class="content-box">
-            <img :src="item.image" alt="商品图片" class="product-pic"/>
-            <p>{{ item.name }}</p>
-            <p>{{ item.price }}</p>
+          <div v-for="product in products" :key="product.product_id" class="content-box"
+            @click="goToProduct(product.product_id, product.order_amount)">
+            <img :src="product.coverImage_url" alt="商品图片" class="product-pic" />
+            <p>{{ product.product_name }}</p>
+            <p>{{ product.product_description }}</p>
+            <p>{{ product.order_amount }}</p>
           </div>
         </div>
 
@@ -100,6 +102,7 @@
 
 <script>
 import Header from '@/components/Header.vue';
+import axios from 'axios';
 export default {
   components: {
     Header
@@ -108,21 +111,7 @@ export default {
   data() {
     return {
       userId: "用户1",
-      products: [
-        { name: "商品名字", price:"价格：1999",image: "../../public/images/pic1.jpg" },
-        { name: "商品名字", price:"价格：1999",image: "../../public/images/pic1.jpg" },
-        { name: "商品名字", price:"价格：1999",image: "../../public/images/pic1.jpg" },
-        { name: "商品名字", price:"价格：1999",image: "../../public/images/pic1.jpg" },
-        { name: "商品名字", price:"价格：1999",image: "../../public/images/pic1.jpg" },
-        { name: "商品名字", price:"价格：1999",image: "../../public/images/pic1.jpg" },
-        { name: "商品名字", price:"价格：1999",image: "../../public/images/pic1.jpg" },
-        { name: "商品名字", price:"价格：1999",image: "../../public/images/pic1.jpg" },
-        { name: "商品名字", price:"价格：1999",image: "../../public/images/pic1.jpg" },
-        { name: "商品名字", price:"价格：1999",image: "../../public/images/pic1.jpg" },
-        { name: "商品名字", price:"价格：1999",image: "../../public/images/pic1.jpg" },
-        { name: "商品名字", price:"价格：1999",image: "../../public/images/pic1.jpg" },
-        // ... 依此类推，添加更多商品数据
-      ],
+      products: [],
       inputValue: '',
       photos: [
         '../../public/images/pic2.jpg',
@@ -131,6 +120,15 @@ export default {
       ],
       currentPhotoIndex: 0
     };
+  },
+  // 在页面加载时获取待出售商品信息到猜你喜欢中
+  async created() {
+    try {
+      const response = await axios.get('http://localhost:3000/showProductForSale');
+      this.products = response.data;
+    } catch (error) {
+      console.error(error);
+    }
   },
   computed: {
     currentPhoto() {
@@ -145,26 +143,30 @@ export default {
     goToPersonalCenter() {
       this.$router.push('/personalcenter');
     },
-    goToMyCollections(){
+    goToMyCollections() {
       this.$router.push('/personalcenter/mycollections');
     },
-    goToMyWallet(){
+    goToMyWallet() {
       this.$router.push('/personalcenter/mywallet');
     },
-    goToMyOrder(){
+    goToMyOrder() {
       this.$router.push('/personalcenter/myorders');
+    },
+    goToProduct(product_id, order_amount) {
+      this.$router.push({ name: 'Product', params: { product_id: product_id, order_amount: order_amount } });
+
     },
     previousPhoto() {
       this.currentPhotoIndex =
-          this.currentPhotoIndex === 0
-              ? this.photos.length - 1
-              : this.currentPhotoIndex - 1;
+        this.currentPhotoIndex === 0
+          ? this.photos.length - 1
+          : this.currentPhotoIndex - 1;
     },
     nextPhoto() {
       this.currentPhotoIndex =
-          this.currentPhotoIndex === this.photos.length - 1
-              ? 0
-              : this.currentPhotoIndex + 1;
+        this.currentPhotoIndex === this.photos.length - 1
+          ? 0
+          : this.currentPhotoIndex + 1;
     },
     searchItems() {
       // 处理搜索逻辑
@@ -184,9 +186,10 @@ export default {
   text-align: center;
 }
 
-.content{
+.content {
   background-color: white;
 }
+
 nav ul {
   display: flex;
   list-style: none;
@@ -200,8 +203,8 @@ nav ul li a {
 }
 
 
-.show-logo img{
-  width:200px;
+.show-logo img {
+  width: 200px;
 }
 
 .page {
@@ -210,6 +213,7 @@ nav ul li a {
   align-items: center;
 
 }
+
 .titles {
   text-align: center;
   margin-bottom: 0;
@@ -218,7 +222,7 @@ nav ul li a {
 .titles a {
   text-decoration: none;
   color: black;
-  margin-right:25px;
+  margin-right: 25px;
   font-size: 18px;
   margin-bottom: 0;
   font-family: Microsoft Yahei;
@@ -226,23 +230,23 @@ nav ul li a {
 }
 
 .titles a:hover {
-  color: rgba(177, 25, 26,1) ;
+  color: rgba(177, 25, 26, 1);
 }
 
 .titles a:first-child {
-  background-color: rgba(177, 25, 26,1) ;
+  background-color: rgba(177, 25, 26, 1);
   color: white;
 }
+
 .line {
   margin-top: 0;
   margin-bottom: 0;
   border: none;
   border-top: 1.5px solid#DDDDDD;
 }
-.main-content{
 
+.main-content {}
 
-}
 .content2 {
   margin-left: 20px;
   margin-right: 20px;
@@ -251,12 +255,14 @@ nav ul li a {
   align-items: flex-start;
   margin-top: 0px;
 }
-.page-content{
+
+.page-content {
   margin-left: 130px;
   margin-right: 130px;
 
 }
-.category a{
+
+.category a {
   text-decoration: none;
   color: black;
   margin-right: 10px;
@@ -265,15 +271,17 @@ nav ul li a {
   margin-top: 10px;
 
 }
-.category{
+
+.category {
   margin-bottom: 10px;
 }
 
 .category a:hover {
-  color: rgba(177, 25, 26,1);
+  color: rgba(177, 25, 26, 1);
 }
-.categories{
-  width:200px;
+
+.categories {
+  width: 200px;
   height: 400px;
   margin-left: 0px;
   margin-right: 0;
@@ -283,14 +291,17 @@ nav ul li a {
 }
 
 #slide {
-  width: 500px; /* 设置容器的宽度 */
+  width: 500px;
+  /* 设置容器的宽度 */
   margin-left: 0;
   margin-top: 20px;
 }
 
-#photos  img {
-  width: 100%; /* 设置图片的宽度为容器的100% */
-  height: auto; /* 让高度按比例自动调整 */
+#photos img {
+  width: 100%;
+  /* 设置图片的宽度为容器的100% */
+  height: auto;
+  /* 让高度按比例自动调整 */
 
 }
 
@@ -302,10 +313,10 @@ nav ul li a {
 
 .content-box {
   text-align: center;
-  height:250px;
+  height: 250px;
   background-color: white;
-  border:0.8px solid #eee;
-  border-radius:15px;
+  border: 0.8px solid #eee;
+  border-radius: 15px;
 }
 
 
@@ -333,7 +344,7 @@ nav ul li a {
   width: 40px;
   height: 40px;
   border-radius: 40px;
-  background-color: rgba(107,107,107,0.55);
+  background-color: rgba(107, 107, 107, 0.55);
   border: none;
   font-size: 24px;
   color: white;
@@ -369,30 +380,35 @@ nav ul li a {
 .button-container button {
   margin-bottom: 10px;
 }
-.button-container button{
-  color:white;
+
+.button-container button {
+  color: white;
   padding: 5px 10px;
-  height:30px;
-  width:75px;
-  background-color:rgba(177, 25, 26,1) ;
-  border:none;
+  height: 30px;
+  width: 75px;
+  background-color: rgba(177, 25, 26, 1);
+  border: none;
   border-radius: 10px;
 }
 
-.button-container button:hover{
-  background-color:rgba(177, 25, 26,0.35) ;
+.button-container button:hover {
+  background-color: rgba(177, 25, 26, 0.35);
 }
-.category2{
+
+.category2 {
   margin-left: 20px;
   margin-right: 20px;
 }
-.avatar{
-margin-top: 20px;
+
+.avatar {
+  margin-top: 20px;
 }
-.pictures{
+
+.pictures {
   border-radius: 15px;
 }
-.product-pic{
+
+.product-pic {
   border-radius: 15px;
 }
 </style>
