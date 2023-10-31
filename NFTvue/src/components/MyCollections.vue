@@ -4,34 +4,33 @@
     <div class="sell">
       <button class="sellbtn2" @click="Seller2">上传本地藏品</button>
       <el-dialog v-model="showModal2" title="填写商品信息" @close="showModal2 = false">
-        <img :src="coverImage" alt="Cover Image" v-if="coverImage" class="cover-image">
-        <el-button class="sellbtn" type="primary" @click="uploadCollection">上传文件</el-button>
-        <el-button class="sellbtn" type="primary" @click="uploadImage">上传封面</el-button>
-        <div v-if="fileType !== null">文件类型: {{ fileType }}</div>
-
-        <div>
-        </div>
-        <el-form>
-          <el-form-item label="商品名称">
-            <el-input v-model="productName"></el-input>
-          </el-form-item>
-          <el-form-item label="价格">
-            <el-input v-model="price"></el-input>
-          </el-form-item>
-          <el-form-item label="商品简介">
-            <el-input v-model="productDescription"></el-input>
-          </el-form-item>
-        </el-form>
-        <span slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="sellProduct" class="sellbtn">出售</el-button>
-          <el-button @click="showModal2 = false" class="sellbtn">取消</el-button>
-        </span>
+        <form @submit.prevent="uploadProduct" enctype='multipart/form-data'>
+          <div>
+            <label>选择元数据文件：</label>
+            <input type='file' ref='metadataFile'>
+          </div>
+          <div>
+            <label>选择封面图片：</label>
+            <input type='file' ref='coverImageFile'>
+          </div>
+          <div>
+            <label>商品名称：</label>
+            <input type='text' v-model='productName'>
+          </div>
+          <div>
+            <label>商品描述：</label>
+            <textarea v-model='productDescription'></textarea>
+          </div>
+          <div>
+            <input type='submit' value='上传'>
+          </div>
+        </form>
       </el-dialog>
     </div>
     <ul>
       <li v-for="item in collection" :key="item.id">
         <div class="collection-item">
-          <!-- <img :src="../../ public / images / pic1.jpg" alt="藏品照片">这里的图片路径需要后续修改> -->
+          <img :src="getFullUrl(item.coverImage_url)" alt="藏品照片">
           <div class="collection-info">
             <h3>{{ item.product_name }}</h3>
             <p>ID: {{ item.product_id }}</p>
@@ -106,8 +105,8 @@ export default {
     Seller2() {
       this.showModal2 = true;
       this.coverImage = null;
-      this.fileType=null;
-      this.metaData=null;
+      this.fileType = null;
+      this.metaData = null;
     },
     sellProduct() {
       // 执行出售商品的逻辑
@@ -121,51 +120,37 @@ export default {
         this.showModal2 = false;
       }
     },
-    uploadCollection() {
-      const input = document.createElement('input');
-      input.type = 'file';
-      input.accept = '';
-      input.onchange = (event) => {
-        if (event.target.files && event.target.files[0]) {
-          const file = event.target.files[0];
-          let fileType = 4;
-          let metaData = file; // 将 file 对象赋值给 metaData 属性
+    async uploadProduct() {
+      const metadataFile = this.$refs.metadataFile.files[0];
+      const coverImageFile = this.$refs.coverImageFile.files[0];
 
-          if (file.type.startsWith('image/')) {
-            fileType = 1; // 图片类型
-          } else if (file.type.startsWith('video/')) {
-            fileType = 2; // 视频类型
-          } else if (file.type.startsWith('audio/')) {
-            fileType = 3; // 音频类型
-          }
+      if (!metadataFile || !coverImageFile) {
+        alert('请确保已选择元数据文件和封面图片！');
+        return;
+      }
 
-          this.fileType = fileType;
-          this.metaData = metaData; // 将 metaData 的值赋给组件的数据属性
+      const formData = new FormData();
+      formData.append('metadata', metadataFile);
+      formData.append('coverImage', coverImageFile);
+      formData.append('product_name', this.productName);
+      formData.append('product_description', this.productDescription);
+
+      try {
+        const response = await axios.post('http://localhost:3000/createProduct', formData ,{ withCredentials: true });
+        if (response.data.code === 200) {
+          alert('产品上传成功！');
+          this.showModal2 = false;  // 关闭弹窗
+        } else {
+          alert(`上传失败: ${response.data.message}`);
         }
-      };
-      input.click();
+      } catch (error) {
+        console.error('上传产品时发生错误:', error.message);
+        alert('上传失败，请稍后再试。');
+      }
     },
-    uploadImage() {
-      const input = document.createElement('input');
-      input.type = 'file';
-      input.accept = 'image/*'; // 只允许上传图片文件
-      input.onchange = (event) => {
-        if (event.target.files && event.target.files[0]) {
-          const file = event.target.files[0];
-          if (file.type.startsWith('image/')) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-              this.coverImage = e.target.result; // 将上传的图片设置为cover的源
-            };
-            reader.readAsDataURL(file);
-          } else {
-            alert('请上传图片文件！');
-          }
-        }
-      };
-      input.click();
-    }
-
+    getFullUrl(relativeUrl) {
+      return `http://localhost:3000${relativeUrl}`;
+    },
   },
 };
 </script>
@@ -212,7 +197,7 @@ export default {
   border-radius: 10px;
 }
 
-.cover-image{
+.cover-image {
   width: 200px;
   height: 200px;
 }
