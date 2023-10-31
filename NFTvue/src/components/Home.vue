@@ -82,7 +82,7 @@
         <div class="content-grid">
           <div v-for="product in products" :key="product.product_id" class="content-box"
             @click="goToProduct(product.product_id, product.order_amount)">
-            <img :src="product.coverImage_url" alt="商品图片" class="product-pic" />
+            <img :src="getFullUrl(product.coverImage_url)" alt="商品图片" class="product-pic" />
             <p>{{ product.product_name }}</p>
             <p>{{ product.product_description }}</p>
             <p>{{ product.order_amount }}</p>
@@ -170,7 +170,10 @@ export default {
     },
     searchItems() {
       // 处理搜索逻辑
-    }
+    },
+    getFullUrl(relativeUrl) {
+      return `http://localhost:3000${relativeUrl}`;
+    },
   }
 };
 

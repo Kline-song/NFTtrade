@@ -9,7 +9,7 @@
     <div class="product-info">
       <div class="product-image">
 
-        <img :src="product.coverImage_url" alt="Product image">
+        <img :src="getFullUrl(product.coverImage_url)" alt="Product image">
 
       </div>
       <div class="product-summary">
@@ -51,7 +51,9 @@
     <div class="product-description">
       <h3>商品详情</h3>
 
-      <iframe v-if="product && product.metaData_url" :src="product.metaData_url" width="600" height="400"></iframe>
+      <div class="iframe-container" v-if="product && product.metaData_url">
+        <iframe :src="product.metaData_url"></iframe>
+      </div>
 
     </div>
   </div>
@@ -92,7 +94,10 @@ export default {
     },
     goToPersonalCenter() {
       this.$router.push('/personalcenter');
-    }
+    },
+    getFullUrl(relativeUrl) {
+      return `http://localhost:3000${relativeUrl}`;
+    },
   }
 
 };
@@ -198,5 +203,30 @@ nav ul li a {
   /* 悬浮时的样式 */
   background-color: red;
   color: white;
+}
+
+.product-description {
+  /* 根据需要设置宽度和高度 */
+  width: 100%;
+  height: 100%;
+}
+
+.iframe-container {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  padding-top: 56.25%;
+  /* 16:9 Aspect Ratio */
+}
+
+.iframe-container iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
 }
 </style>
