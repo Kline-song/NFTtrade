@@ -8,7 +8,9 @@
   <div class="product-details">
     <div class="product-info">
       <div class="product-image">
+
         <img :src="product.coverImage_url" alt="Product image">
+
       </div>
       <div class="product-summary">
         <h2>{{ product.product_name }}</h2>
@@ -48,7 +50,9 @@
     </div>
     <div class="product-description">
       <h3>商品详情</h3>
+
       <iframe v-if="product && product.metaData_url" :src="product.metaData_url" width="600" height="400"></iframe>
+
     </div>
   </div>
 
@@ -67,7 +71,9 @@ export default {
   },
   data() {
     return {
+
       product: null,
+
     };
   },
   async created() {
