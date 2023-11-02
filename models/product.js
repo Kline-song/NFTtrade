@@ -46,6 +46,9 @@ class Product extends Base {
     }
   }
 
+  async update(productId, params) {
+    return await knex('product').where('product_id', '=', productId).update(params);
+  }
 }
 
 module.exports = new Product();

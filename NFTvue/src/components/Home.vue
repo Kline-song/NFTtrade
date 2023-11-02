@@ -112,6 +112,7 @@ export default {
     return {
       userId: "用户1",
       products: [],
+      timerId: null,
       inputValue: '',
       photos: [
         '../../public/images/pic2.jpg',
@@ -123,12 +124,10 @@ export default {
   },
   // 在页面加载时获取待出售商品信息到猜你喜欢中
   async created() {
-    try {
-      const response = await axios.get('http://localhost:3000/showProductForSale');
-      this.products = response.data;
-    } catch (error) {
-      console.error(error);
-    }
+    this.fetchProducts();
+
+    // Fetch products every 5 seconds
+    this.timerId = setInterval(this.fetchProducts, 5000);
   },
   computed: {
     currentPhoto() {
@@ -140,6 +139,14 @@ export default {
     setInterval(this.nextPhoto, 3000);
   },
   methods: {
+    async fetchProducts() {
+      try {
+        const response = await axios.get('http://localhost:3000/showProductForSale');
+        this.products = response.data;
+      } catch (error) {
+        console.error(error);
+      }
+    },
     goToPersonalCenter() {
       this.$router.push('/personalcenter');
     },
