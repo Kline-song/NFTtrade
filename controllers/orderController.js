@@ -1,7 +1,7 @@
 // orderController
 
 const Order = require('../models/order.js');
-const user = require('../models/user.js');
+const User = require('../models/user.js');
 
 // 以下为未实现的函数伪代码
 
@@ -10,19 +10,39 @@ const orderController = {
   // 创建一个订单
   createOrder: async function (req, res, next) {
     try {
-      const { seller_id, product_id, order_amount } = req.body;
+      const { product_id, order_amount } = req.body;
+      // 验证请求参数
+      if (!product_id || !order_amount) {
+        throw new Error('product_id或order_amount参数缺失');
+      }
 
-
+      const seller_id = req.session.user_id;
+      
+      // 验证seller_id是否存在
+      if (!seller_id) {
+        throw new Error('seller_id不存在');
+      }
+      
       // 创建订单
       const order = await Order.createOrder(product_id, seller_id, order_amount);
-
-      await order.save();
+      // 验证创建结果
+      if (!order) {
+        throw new Error('订单创建失败');
+      }
 
       res.json({ code: 200, message: '订单创建成功', data: order });
+
     } catch (error) {
-      res.status(500).json({ code: 500, message: '创建订单时发生错误', error: error.message });
+      // 错误处理
+      if (error.message.includes('缺失') || error.message.includes('类型错误')) {
+        res.status(400).json({ code: 400, message: error.message });
+      } else {
+        res.status(500).json({ code: 500, message: '创建订单时发生错误', error: error.message });
+        console.error(error);
+      }
     }
   },
+
 
   // 展示一个订单
   showOrder: async function (req, res, next) {
@@ -112,12 +132,12 @@ const orderController = {
 
       // 处理交易过程
       // 减少买家资产（假设有相关的买家资产字段）
-      const buyer = await user.findById(order.buyer_id);
+      const buyer = await User.findById(order.buyer_id);
       buyer.currancy -= order.order_amount;
       await buyer.save();
 
       // 增加卖家资产（假设有相关的卖家资产字段）
-      const seller = await user.findById(order.seller_id);
+      const seller = await User.findById(order.seller_id);
       seller.currancy += order.order_amount;
       await seller.save();
 
