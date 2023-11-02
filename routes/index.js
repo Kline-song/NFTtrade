@@ -57,4 +57,7 @@ router.get('/cancelOrder', orderController.cancelOrder);
 //将订单加入购物车
 router.get('/pending_paymentOrde', orderController.pending_paymentOrder);
 
+//交易订单
+router.get('/getTransactionOrder/:id', orderController.getTransactionOrder);
+
 module.exports = router;

@@ -10,14 +10,14 @@ class Order extends Base {
 
   async createOrder(product_id, seller_id, order_amount) {
     try {
-        const order_id = uuid.v4(); // 生成唯一的 order_id
-        const order_status = 1; // order_status只有4个值，0 已取消，1 待交易，2 已交易，3 待付款
-        const create_time = new Date().toISOString().slice(0, 19).replace('T', ' ');
-        
-        return await this.insert({ order_id, order_status, create_time, product_id, seller_id, order_amount });
+      const order_id = uuid.v4(); // 生成唯一的 order_id
+      const order_status = 1; // order_status只有4个值，0 已取消，1 待交易，2 已交易，3 待付款
+      const create_time = new Date().toISOString().slice(0, 19).replace('T', ' ');
+
+      return await this.insert({ order_id, order_status, create_time, product_id, seller_id, order_amount });
     } catch (error) {
-        console.error('Error in createorder:', error.message);
-        throw error;  // 将错误向上抛出，以便调用者知道有错误发生
+      console.error('Error in createorder:', error.message);
+      throw error;  // 将错误向上抛出，以便调用者知道有错误发生
     }
   }
 
@@ -28,7 +28,7 @@ class Order extends Base {
     // Implement DB query to fetch transaction history of a specific NFT using nftId
   }
   async findById(order_id) {
-    return this.where({ order_id }).find();
+    return this.findBy(order_id, 'order_id');
   }
   async findOrdersByStatus(status) {
     try {
@@ -40,11 +40,14 @@ class Order extends Base {
   }
   async findOrdersByProductId(product_id) {
     try {
-      const orders = await knex('order').where({ product_id });
+      const orders = await knex('order').where({ product_id, order_status: 1 });
       return orders;
     } catch (err) {
       throw err;
     }
+  }
+  async update(orderId, params) {
+    return await knex('order').where('order_id', '=', orderId).update(params);
   }
 }
 

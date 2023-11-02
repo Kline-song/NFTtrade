@@ -21,7 +21,8 @@
         <p>{{ product.product_description }}</p>
 
 
-        <button class="buy-btn" @click="addToCart">购买</button>
+        <button class="buy-btn" @click="confirmPurchase">购买</button>
+        <div class="message">{{ message }}</div>
 
       </div>
     </div>
@@ -50,7 +51,7 @@ export default {
   },
   data() {
     return {
-
+      message: '',
       product: null,
 
     };
@@ -66,8 +67,22 @@ export default {
     }
   },
   methods: {
+    confirmPurchase() {
+      if (window.confirm('你确定要购买这个商品吗？')) {
+        this.addToCart();
+      }
+    },
     addToCart() {
-      // Add logic to add product to cart
+      const productId = this.$route.params.product_id;
+      console.log('productId:', productId);
+      axios.get(`http://localhost:3000/getTransactionOrder/${productId}`, { withCredentials: true })
+        .then(response => {
+          this.message = response.data.message;
+        })
+        .catch(error => {
+          console.error(error);
+          this.message = 'An error occurred: ' + error;
+        });
     },
     goToPersonalCenter() {
       this.$router.push('/personalcenter');
@@ -209,4 +224,15 @@ nav ul li a {
   border: none;
 }
 
+.message {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+  border-radius: .25rem;
+}
 </style>
