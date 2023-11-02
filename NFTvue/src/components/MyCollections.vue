@@ -40,18 +40,18 @@
 
             <el-dialog v-model="showModal1" title="填写商品信息" @close="showModal1 = false">
               <el-form>
-                <el-form-item label="商品名称">
+                <!-- <el-form-item label="商品名称">
                   <el-input v-model="productName"></el-input>
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item label="价格">
                   <el-input v-model="price"></el-input>
                 </el-form-item>
-                <el-form-item label="商品简介">
+                <!-- <el-form-item label="商品简介">
                   <el-input v-model="productDescription"></el-input>
-                </el-form-item>
+                </el-form-item> -->
               </el-form>
               <span slot="footer" class="dialog-footer">
-                <el-button type="primary" @click="sellProduct" class="sellbtn">出售</el-button>
+                <el-button type="primary" @click="sellProduct(item.product_id)" class="sellbtn">出售</el-button>
                 <el-button @click="showModal1 = false" class="sellbtn">取消</el-button>
               </span>
             </el-dialog>
@@ -108,16 +108,22 @@ export default {
       this.fileType = null;
       this.metaData = null;
     },
-    sellProduct() {
-      // 执行出售商品的逻辑
-      // 可以在这里将商品信息提交给后端
-      console.log(this.productName, this.price, this.productDescription);
-      // 关闭弹窗
-      if (this.showModal1 == true) {
-        this.showModal1 = false;
-      }
-      else if (this.showModal2 == true) {
-        this.showModal2 = false;
+    async sellProduct(productId) {
+      try {
+        const response = await axios.post('http://localhost:3000/createOrder', {
+          product_id: productId,
+          order_amount: this.price
+        }, { withCredentials: true });
+
+        if (response.data.code === 200) {
+          alert('订单创建成功！');
+          this.showModal1 = false;  // 关闭弹窗
+        } else {
+          alert(`创建订单失败: ${response.data.message}`);
+        }
+      } catch (error) {
+        console.error('创建订单时发生错误:', error.message);
+        alert('创建订单失败，请稍后再试。');
       }
     },
     async uploadProduct() {
@@ -136,7 +142,7 @@ export default {
       formData.append('product_description', this.productDescription);
 
       try {
-        const response = await axios.post('http://localhost:3000/createProduct', formData ,{ withCredentials: true });
+        const response = await axios.post('http://localhost:3000/createProduct', formData, { withCredentials: true });
         if (response.data.code === 200) {
           alert('产品上传成功！');
           this.showModal2 = false;  // 关闭弹窗
