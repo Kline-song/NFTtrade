@@ -10,8 +10,17 @@
           <button @click="handleSearch">搜索</button>
         </div>
         <div class="person">
-          <button class="perbtn" @click="goToPersonalCenter">个人中心</button>
+          <div class="dropdown">
+            <button class="perbtn" @mouseover="showDropdown" @mouseleave="hideDropdown" @click="goToPersonalCenter">个人中心</button>
+            <div class="dropdown-content" v-show="showMenu" @mouseover="showDropdown" @mouseleave="hideDropdown">
+              <button class="dropdown-item" @click="goToPersonalInfo">个人资料</button>
+              <button class="dropdown-item" @click="goToMyCollections">我的藏品</button>
+              <button class="dropdown-item" @click="goToMyOrder">我的订单</button>
+              <button class="dropdown-item" @click="goToMyWallet">我的钱包</button>
+            </div>
+          </div>
         </div>
+        <img class="collections" @click="goToMyCollections" src="../../public/images/collections.png" title="我的藏品">
       </div>
     </nav>
   </header>
@@ -19,6 +28,11 @@
 
 <script>
 export default {
+  data(){
+    return{
+      showMenu: false
+    }
+  },
   props: {
     value: {
       type: String,
@@ -34,7 +48,27 @@ export default {
     },
     goToPersonalCenter() {
       this.$router.push('/personalcenter/personalinfo');
-    }
+    },
+    goToPersonalInfo(){
+      this.$router.push('/personalcenter/personalinfo');
+    },
+    goToMyCollections(){
+      this.$router.push('/personalcenter/mycollections');
+    },
+    goToMyOrder(){
+      this.$router.push('/personalcenter/myorders');
+    },
+    goToMyWallet(){
+      this.$router.push('/personalcenter/mywallet');
+    },
+    showDropdown() {
+      this.showMenu = true;
+    },
+    hideDropdown() {
+      setTimeout(() => {
+        this.showMenu = false;
+      }, 5000) // 留出一点时间，确保鼠标能够移动到下拉框上
+    },
   }
 }
 </script>
@@ -49,7 +83,7 @@ export default {
   height:50px;
   margin-bottom: 20px;
   background-color: white;
-  position:sticky;
+  position:fixed;
 }
 
 .nav-list {
@@ -136,6 +170,36 @@ input[type="text"] {
   background-color:rgba(177, 25, 26,0.35) ;
 }
 
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  z-index: 1;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown-item{
+  color:rgba(177, 25, 26,1) ;
+  padding: 5px 10px;
+  height:30px;
+  width:75px;
+  border:none;
+}
+.collections{
+  width:35px;
+  height:35px;
+}
+.collections:hover{
+  border:0.5px solid gainsboro;
+  border-radius: 20px;
+}
 /*上面是版头的css*/
 
 </style>

@@ -5,24 +5,24 @@
       <button class="sellbtn2" @click="Seller2">上传本地藏品</button>
       <el-dialog v-model="showModal2" title="填写商品信息" @close="showModal2 = false">
         <form @submit.prevent="uploadProduct" enctype='multipart/form-data'>
-          <div>
+          <div class="product-input">
             <label>选择元数据文件：</label>
-            <input type='file' ref='metadataFile'>
+            <input type='file' ref='metadataFile' class="choose">
           </div>
-          <div>
+          <div class="product-input">
             <label>选择封面图片：</label>
-            <input type='file' ref='coverImageFile'>
+            <input type='file' ref='coverImageFile' class="choose">
           </div>
-          <div>
+          <div class="product-input">
             <label>商品名称：</label>
-            <input type='text' v-model='productName'>
+            <input type='text' v-model='productName' class="inputlabel">
           </div>
-          <div>
+          <div class="product-input">
             <label>商品描述：</label>
-            <textarea v-model='productDescription'></textarea>
+            <textarea v-model='productDescription' class="inputlabel2"></textarea>
           </div>
           <div>
-            <input type='submit' value='上传'>
+            <input type='submit' value='上传' class="btn">
           </div>
         </form>
       </el-dialog>
@@ -206,5 +206,43 @@ export default {
 .cover-image {
   width: 200px;
   height: 200px;
+}
+.inputlabel{
+  margin-top: 20px;
+  border-radius: 10px;
+  width:150px;
+}
+.inputlabel2{
+  margin-top: 20px;
+  border-radius: 10px;
+  width:300px;
+  height:20px;
+}
+.btn{
+  color: white;
+  padding: 5px 10px;
+  height: 30px;
+  width: 150px;
+  background-color: rgba(177, 25, 26, 1);
+  border: none;
+  border-radius: 10px;
+}
+.btn:hover{
+  background-color: rgba(177, 25, 26, 0.4);
+}
+.btn:active{
+  background-color: rgba(177, 25, 26, 0.4);
+}
+label{
+ text-align: left;
+}
+.choose{
+  margin-top: 5px;
+  margin-bottom: 10px;
+}
+.product-input{
+  text-align: left;
+  margin-left: 120px;
+  margin-bottom: 10px;
 }
 </style>

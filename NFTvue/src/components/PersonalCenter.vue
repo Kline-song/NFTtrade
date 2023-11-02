@@ -2,7 +2,7 @@
   <div class="header">
     <Header :input-value="inputValue" @update:input-value="inputValue = $event" @search="searchItems" />
   </div>
-
+<div class="page">
   <div class="headtitle">
     <h1>个人中心</h1>
   </div>
@@ -19,6 +19,7 @@
       </div>
     </div>
   </div>
+</div>
 </template>
 
 <script>
@@ -59,6 +60,9 @@ export default {
 </script>
 
 <style>
+.page{
+  margin-top: 70px;
+}
 .headtitle h1 {
   text-align: left;
   margin-left: 100px;
