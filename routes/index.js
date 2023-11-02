@@ -46,7 +46,7 @@ router.get('/showProductForSale', productController.listProductsForSale);
 router.get('/product/:id', productController.getProductDetails);
 
 //创建订单
-router.get('/createOrder', orderController.createOrder);
+router.post('/createOrder', checkLogin, orderController.createOrder);
 
 //展示订单
 router.get('/showOrder', orderController.showOrder);
