@@ -3,6 +3,7 @@
 const Base = require('./base');
 const uuid = require('uuid');
 const { findById } = require('./order');
+const knex = require('../models/knex');
 
 class User extends Base {
   // 定义参数默认值为 user 表
@@ -20,5 +21,12 @@ class User extends Base {
     return this.findBy(username, 'username');
   }
 
+  async findById(user_id) {
+    const data = await this.findBy(user_id, 'user_id');
+    return data;
+  }
+  async update(user_id, params) {
+    return await knex(this.table).where('user_id', '=', user_id).update(params);
+  }
 }
 module.exports = new User();

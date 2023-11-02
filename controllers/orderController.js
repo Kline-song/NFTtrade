@@ -1,7 +1,7 @@
 // orderController
-
 const Order = require('../models/order.js');
 const User = require('../models/user.js');
+const Product = require('../models/product.js');
 
 // 以下为未实现的函数伪代码
 
@@ -17,12 +17,12 @@ const orderController = {
       }
 
       const seller_id = req.session.user_id;
-      
+
       // 验证seller_id是否存在
       if (!seller_id) {
         throw new Error('seller_id不存在');
       }
-      
+
       // 创建订单
       const order = await Order.createOrder(product_id, seller_id, order_amount);
       // 验证创建结果
@@ -118,10 +118,15 @@ const orderController = {
   //交易一个订单
   getTransactionOrder: async function (req, res, next) {
     try {
-      const { order_id } = req.params;
+      const productId = req.params.id;
+      console.log('Product ID:', productId);
 
       // 从数据库中获取订单数据
-      const order = await Order.findById(order_id);
+      const order = await Order.findOrdersByProductId(productId);
+      console.log('Order:', order);
+
+      const userId = req.session.user_id;
+      console.log('User ID:', userId);
 
       if (!order) {
         return res.status(404).json({
@@ -132,24 +137,27 @@ const orderController = {
 
       // 处理交易过程
       // 减少买家资产（假设有相关的买家资产字段）
-      const buyer = await User.findById(order.buyer_id);
-      buyer.currancy -= order.order_amount;
-      await buyer.save();
+      const buyer = await User.findById(userId);
+      console.log('Buyer before transaction:', buyer);
+      await User.update(buyer.user_id, { currency: buyer.currency - order[0].order_amount });
+      console.log('Buyer after transaction:', await User.findById(userId));
 
       // 增加卖家资产（假设有相关的卖家资产字段）
-      const seller = await User.findById(order.seller_id);
-      seller.currancy += order.order_amount;
-      await seller.save();
+      const seller = await User.findById(order[0].seller_id);
+      console.log('Seller before transaction:', seller);
+      await User.update(seller.user_id, { currency: seller.currency + order[0].order_amount });
+      console.log('Seller after transaction:', await User.findById(order[0].seller_id));
 
       // 修改商品归属权（假设有相关的商品归属权字段）
-      const product = await product.findById(order.product_id);
-      product.owner_id = order.buyer_id;
-      await product.save();
+      const product = await Product.findById(order[0].product_id);
+      console.log('Product before transaction:', product);
+      product.owner_id = userId;
+      await Product.update(product.product_id, { owner_id: userId });
+      console.log('Product after transaction:', await Product.findById(order[0].product_id));
 
       // 更新订单状态和买家ID
-      order.order_status = 2;  // 假设状态2表示交易完成
-      order.buyer_id = req.body.buyer_id;
-      await order.save();
+      await Order.update(order[0].order_id, { order_status: 2, buyer_id: userId });
+      console.log('Order after transaction:', await Order.findById(order[0].order_id));
 
       // 返回订单信息和处理结果
       res.status(200).json({
@@ -158,6 +166,7 @@ const orderController = {
         data: order
       });
     } catch (error) {
+      console.log('Error:', error);
       res.status(500).json({
         code: 500,
         message: '处理交易时发生错误',

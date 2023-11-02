@@ -27,6 +27,15 @@ class Base {
     return await knex(this.table).where('id', '=', id).del();
   }
 
+  async save(data) {
+    try {
+      return await knex(this.table).insert(data);
+    } catch (error) {
+      console.error('Error saving data:', error);
+      throw error;
+    }
+  }
+
   // 返回查询到的第一个元素
   async findBy(id, idName) {
     return await knex(this.table).where(idName, '=', id).first();
