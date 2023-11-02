@@ -19,30 +19,7 @@
           <span class="price-value">{{ this.$route.params.order_amount }}</span>
         </div>
         <p>{{ product.product_description }}</p>
-        <div>
-          <label for="quantity">购买数量:</label>
-          <select id="quantity">
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-          </select>
-        </div>
-        <div>
-          <label for="type">商品类型:</label>
-          <select id="type">
-            <option value="type1">类型1</option>
-            <option value="type2">类型2</option>
-            <option value="type3">类型3</option>
-          </select>
-        </div>
-        <div>
-          <label for="purchase-method">支付方式:</label>
-          <select id="purchase-method">
-            <option value="method1">方式1</option>
-            <option value="method2">方式2</option>
-            <option value="method3">方式3</option>
-          </select>
-        </div>
+
 
         <button class="buy-btn" @click="addToCart">购买</button>
 
@@ -52,7 +29,7 @@
       <h3>商品详情</h3>
 
       <div class="iframe-container" v-if="product && product.metaData_url">
-        <iframe :src="product.metaData_url"></iframe>
+        <iframe :src="product.metaData_url" ></iframe>
       </div>
 
     </div>
@@ -131,6 +108,7 @@ nav ul li a {
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-top: 70px;
 }
 
 .product-info {
@@ -217,6 +195,7 @@ nav ul li a {
   width: 100%;
   padding-top: 56.25%;
   /* 16:9 Aspect Ratio */
+
 }
 
 .iframe-container iframe {
@@ -229,4 +208,5 @@ nav ul li a {
   height: 100%;
   border: none;
 }
+
 </style>

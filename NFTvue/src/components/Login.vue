@@ -1,7 +1,10 @@
 <template>
+  <div class="register" :style="{width: fullWidth+'px', height:fullHeight+'px'}">
+    <div class="img_box" :style="{width: fullWidth+'px'}"></div>
+    </div>
   <div class="login-container">
     <div class="login-box">
-      <h1>立即登录</h1>
+      <h1 class="login-now">立即登录</h1>
       <div class="input-container">
         <div class="input-wrapper">
           <input type="text" v-model="username" placeholder="请输入账号" />
@@ -10,10 +13,15 @@
           <input type="password" v-model="password" placeholder="请输入密码" />
         </div>
       </div>
+      <div class="buttons">
       <el-button class="button1" type="primary" @click="login">登录</el-button>
       <el-button class="button2" type="text" @click="register">立即注册</el-button>
+      </div>
     </div>
   </div>
+
+
+
 </template>
 
 <script>
@@ -24,7 +32,9 @@ export default {
   data() {
     return {
       username: '',
-      password: ''
+      password: '',
+      fullWidth: document.documentElement.clientWidth,
+      fullHeight: document.documentElement.clientHeight
     };
   },
   methods: {
@@ -49,35 +59,55 @@ export default {
     register() {
       // 跳转到注册页面的逻辑
       this.$router.push('/register');
+    },
+    handleResize () {
+      this.fullWidth = document.documentElement.clientWidth
+      this.fullHeight = document.documentElement.clientHeight
     }
+  },
+  created () {
+    window.addEventListener('resize', this.handleResize)
+  },
+  beforeUnmount () {
+    window.removeEventListener('resize', this.handleResize)
   }
 }
 </script>
 
 <style scoped>
-.login-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 70vh;
-  background-color: #F4F4F4;
-  margin-bottom: 100px;
-  margin-top: 100px;
+.register {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -1;
 }
+
+.img_box {
+  position: absolute;
+  background-image: url("../../public/images/background1.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+  width: 101%;
+  height: 101%;
+}
+
 
 .login-box {
   width: 350px;
   height: 250px;
   padding: 20px;
-  border: 1px solid black;
-  background-color: #fff;
+  border: none;
+  background-color: rgba(220,220,220,0.55);
+  border-radius: 50px;
   text-align: center;
-  margin-left: 500px;
+  margin-left: 700px;
   height: 250px;
+  margin-top: 180px;
 }
 
 .login-box h1 {
-  margin-bottom: 50px;
+  margin-bottom: 30px;
 }
 
 .input-container {
@@ -89,25 +119,40 @@ export default {
   margin-bottom: 15px;
   margin-left: 0;
 }
-
 input[type="text"],
 input[type="password"] {
-  width: 200px;
+  width: 240px;
   /* 修改输入框宽度为100% */
-  height: 25px;
-  border: 1px solid black;
+  height: 27px;
+  border:none;
   /* 修改输入框边框颜色为黑色 */
   border-radius: 10px;
+
 }
 
 .button1 {
   background-color: rgba(177, 25, 26, 1);
   color: white;
   border: none;
+  width:200px;
+  margin-left: 80px;
+  border-radius: 20px;
+}
+.button1:hover{
+  background-color: rgba(177, 25, 26, 0.4);
 }
 
 .button2 {
   margin-left: 10px;
   color: rgba(177, 25, 26, 1);
+}
+.login-now{
+  color:rgba(177, 25, 26, 1);
+}
+.buttons{
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+  margin-top: 10px;
 }
 </style>

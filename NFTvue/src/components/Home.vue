@@ -6,77 +6,12 @@
   <div>
 
 
-    <div class="content">
-      <h2 class="titles">
-        <a href="#">全部商品分类 </a>
-        <a href="#">为你推荐 </a>
-        <a href="#">绘画 </a>
-        <a href="#">摄影 </a>
-        <a href="#">音乐 </a>
-        <a href="#">视频</a>
-        <a href="#">游戏物品 </a>
-        <a href="#">虚拟地产 </a>
-        <a href="#">元宇宙资产</a>
-      </h2>
-      <hr class="line">
-    </div>
+
     <div class="main-content">
       <div class="page-content">
 
-        <div class="content2">
-          <div class="categories">
-            <div class="category">
-              <a href="#">绘画 </a>
-            </div>
-            <div class="category">
-              <a href="#">摄影 </a>
-            </div>
-            <div class="category">
-              <a href="#">音乐 </a>
-            </div>
-            <div class="category">
-              <a href="#">视频 </a>
-            </div>
-            <div class="category">
-              <a href="#">游戏物品 </a>
-            </div>
-            <div class="category">
-              <a href="#">虚拟地产 </a>
-            </div>
-            <div class="category">
-              <a href="#">元宇宙资产 </a>
-            </div>
-            <router-link to="/product">（先查看一个商品）</router-link>
-          </div>
-
-          <div id="slide">
-            <class id="photos">
-              <div class="photo">
-                <button class="arrow left" @click="previousPhoto">&#8249;</button>
-                <img :src="currentPhoto" alt="Photo" style="width: 500px; height: 400px;" class="pictures" />
-                <button class="arrow right" @click="nextPhoto">&#8250;</button>
-              </div>
-            </class>
-          </div>
-          <div class="categories">
-            <div class="category2">
-              <div class="avatar">
-                <img src="../../public/images/avatar.png" alt="Avatar">
-              </div>
-              <div class="user-id">Hi, {{ userId }}</div>
-              <div class="button-container">
-                <button @click="goToMyCollections">我的藏品</button>
-                <button @click="goToMyWallet">我的钱包</button>
-                <button @click="goToMyOrder">我的订单</button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-
-
         <div class="title2">
-          <h1>猜你喜欢</h1>
+          <h1>全部商品</h1>
         </div>
 
         <div class="content-grid">
@@ -96,7 +31,6 @@
   </div>
 
   <footer class="footer">
-    版权信息等内容
   </footer>
 </template>
 
@@ -131,14 +65,9 @@ export default {
     }
   },
   computed: {
-    currentPhoto() {
-      return this.photos[this.currentPhotoIndex];
-    }
+
   },
-  mounted() {
-    // 设置定时器，每隔3秒切换到下一张图片
-    setInterval(this.nextPhoto, 3000);
-  },
+
   methods: {
     goToPersonalCenter() {
       this.$router.push('/personalcenter');
@@ -153,21 +82,15 @@ export default {
       this.$router.push('/personalcenter/myorders');
     },
     goToProduct(product_id, order_amount) {
-      this.$router.push({ name: 'Product', params: { product_id: product_id, order_amount: order_amount } });
+      this.$router.push({
+        name: 'Product',
+        params: {
+          product_id: product_id,
+          order_amount: order_amount
+        }
+      });
+    },
 
-    },
-    previousPhoto() {
-      this.currentPhotoIndex =
-        this.currentPhotoIndex === 0
-          ? this.photos.length - 1
-          : this.currentPhotoIndex - 1;
-    },
-    nextPhoto() {
-      this.currentPhotoIndex =
-        this.currentPhotoIndex === this.photos.length - 1
-          ? 0
-          : this.currentPhotoIndex + 1;
-    },
     searchItems() {
       // 处理搜索逻辑
     },
@@ -210,17 +133,6 @@ nav ul li a {
   width: 200px;
 }
 
-.page {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-}
-
-.titles {
-  text-align: center;
-  margin-bottom: 0;
-}
 
 .titles a {
   text-decoration: none;
@@ -245,10 +157,12 @@ nav ul li a {
   margin-top: 0;
   margin-bottom: 0;
   border: none;
-  border-top: 1.5px solid#DDDDDD;
+  border-top: 1.5px solid rgba(189,189,189,0.9);
 }
 
-.main-content {}
+.main-content {
+  margin-top: 70px;
+}
 
 .content2 {
   margin-left: 20px;
@@ -260,8 +174,9 @@ nav ul li a {
 }
 
 .page-content {
-  margin-left: 130px;
+  margin-left: 160px;
   margin-right: 130px;
+
 
 }
 
@@ -283,15 +198,6 @@ nav ul li a {
   color: rgba(177, 25, 26, 1);
 }
 
-.categories {
-  width: 200px;
-  height: 400px;
-  margin-left: 0px;
-  margin-right: 0;
-  margin-top: 20px;
-  background-color: #f2f2f2;
-  border-radius: 20px;
-}
 
 #slide {
   width: 500px;
@@ -312,21 +218,24 @@ nav ul li a {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   grid-gap: 20px;
+  margin-bottom: 50px;
+  margin-top: 30px;
 }
 
 .content-box {
   text-align: center;
-  height: 250px;
+  height: 245px;
+  width: 190px;
   background-color: white;
-  border: 0.8px solid #eee;
+  border: 0.8px solid rgba(189,189,189,0.8);
   border-radius: 15px;
 }
 
 
 .content-box img {
   margin-top: 10px;
-  width: 90%;
-  height: 70%;
+  width: 82%;
+  height: 61%;
 }
 
 .content-box p {
@@ -413,5 +322,8 @@ nav ul li a {
 
 .product-pic {
   border-radius: 15px;
+}
+h1{
+  text-align: left;
 }
 </style>
