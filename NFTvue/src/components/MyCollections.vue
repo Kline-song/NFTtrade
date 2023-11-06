@@ -22,7 +22,7 @@
             <textarea v-model='productDescription' class="inputlabel2"></textarea>
           </div>
           <div>
-            <input type='submit' value='上传' class="btn">
+            <input type="submit" value="上传" class="btn" :disabled="isUploading" @click="handleUploadClick">
           </div>
         </form>
       </el-dialog>
@@ -79,6 +79,7 @@ export default {
       collection: [],
       fileType: null,
       metaData: null,
+      isUploading: false, // 添加 isUploading 数据属性用于跟踪上传状态
     };
   },
   created() {
@@ -134,7 +135,7 @@ export default {
         alert('请确保已选择元数据文件和封面图片！');
         return;
       }
-
+      this.isUploading = true; // 开始上传时禁用提交按钮
       const formData = new FormData();
       formData.append('metadata', metadataFile);
       formData.append('coverImage', coverImageFile);
@@ -146,8 +147,10 @@ export default {
         if (response.data.code === 200) {
           alert('产品上传成功！');
           this.showModal2 = false;  // 关闭弹窗
+          this.isUploading = false;
         } else {
           alert(`上传失败: ${response.data.message}`);
+          this.isUploading = false;
         }
       } catch (error) {
         console.error('上传产品时发生错误:', error.message);
@@ -156,6 +159,11 @@ export default {
     },
     getFullUrl(relativeUrl) {
       return `http://localhost:3000${relativeUrl}`;
+    },
+    handleUploadClick() {
+      if (this.isUploading) {
+        alert("有一个上传进程正在进行");
+      }
     },
   },
 };

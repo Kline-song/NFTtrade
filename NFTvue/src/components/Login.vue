@@ -10,7 +10,7 @@
           <input type="text" v-model="username" placeholder="请输入账号" />
         </div>
         <div class="input-wrapper">
-          <input type="password" v-model="password" placeholder="请输入密码" />
+          <input type="password" v-model="password" placeholder="请输入密码" @keydown.enter="loginOnEnter" />
         </div>
       </div>
       <div class="buttons">
@@ -63,7 +63,13 @@ export default {
     handleResize () {
       this.fullWidth = document.documentElement.clientWidth
       this.fullHeight = document.documentElement.clientHeight
-    }
+    },
+    loginOnEnter(event) {
+      if (event.key === 'Enter') {
+        // 按下回车键后模拟点击登录按钮
+        this.login();
+      }
+    },
   },
   created () {
     window.addEventListener('resize', this.handleResize)
@@ -147,7 +153,7 @@ input[type="password"] {
   color: rgba(177, 25, 26, 1);
 }
 .login-now{
-  color:rgba(177, 25, 26, 1);
+  color:white;
 }
 .buttons{
   display: flex;
