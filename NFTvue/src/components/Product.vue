@@ -225,14 +225,6 @@ nav ul li a {
 }
 
 .message {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  padding: 20px;
-  background-color: #f8d7da;
-  color: #721c24;
-  border: 1px solid #f5c6cb;
-  border-radius: .25rem;
+
 }
 </style>

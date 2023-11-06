@@ -119,22 +119,6 @@ export default {
   text-align: center;
 }
 
-.content {
-  background-color: white;
-}
-
-nav ul {
-  display: flex;
-  list-style: none;
-  gap: 25px;
-  height: 3px;
-}
-
-nav ul li a {
-  text-decoration: none;
-  color: black;
-}
-
 
 .show-logo img {
   width: 200px;

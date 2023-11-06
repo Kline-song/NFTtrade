@@ -21,7 +21,7 @@
           </div>
         </div>
         <img class="collections" @click="goToMyCollections" src="../../public/images/collections.png" title="我的藏品">
-      </div>
+        </div>
     </nav>
   </header>
 </template>
@@ -118,6 +118,7 @@ export default {
   background-color:rgba(177, 25, 26,1) ;
   border:none;
   border-radius: 10px;
+  margin-top: 3px;
 }
 
 .perbtn:hover{
@@ -195,6 +196,7 @@ input[type="text"] {
 .collections{
   width:35px;
   height:35px;
+  margin-top:6px;
 }
 .collections:hover{
   border:0.5px solid gainsboro;
