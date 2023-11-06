@@ -3,7 +3,7 @@ const configs = {
     host: '127.0.0.1',
     port: '3306',
     user: 'root',
-    password: 'caixinyi',  // 自己设置的密码
+    password: '123456',  // 自己设置的密码
     database: 'nftback' // 数据库的名字
   },
   ipfs: {
