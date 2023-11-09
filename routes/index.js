@@ -63,4 +63,10 @@ router.get('/pending_paymentOrde', orderController.pending_paymentOrder);
 //交易订单
 router.get('/getTransactionOrder/:id', orderController.getTransactionOrder);
 
+// 获取用户余额
+router.get('/showCurrency', checkLogin, userController.showCurrency);
+
+//充值钱包
+router.post('/addCurrency', checkLogin, userController.addCurrency);
+
 module.exports = router;
