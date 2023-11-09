@@ -49,6 +49,22 @@ class Order extends Base {
   async update(orderId, params) {
     return await knex('order').where('order_id', '=', orderId).update(params);
   }
+  async findOrdersBySellerId(seller_id) {
+    try {
+      const orders = await knex('order').where({ seller_id: seller_id });
+      return orders;
+    } catch (err) {
+      throw err;
+    }
+  }
+  async findOrdersByBuyerId(buyer_id) {
+    try {
+      const orders = await knex('order').where({ buyer_id: buyer_id });
+      return orders;
+    } catch (err) {
+      throw err;
+    }
+  }
 }
 
 module.exports = new Order();

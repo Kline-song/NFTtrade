@@ -113,9 +113,9 @@ const productController = {
   listProductsForSale: async function (req, res, next) {
     try {
       const orders = await Order.findOrdersByStatus(1);
-      console.log(orders);
+      //console.log(orders);
       const productIds = orders.map(order => order.product_id);
-      console.log(productIds);
+      //console.log(productIds);
       let products = await Product.findProductsByIds(productIds);
       products = products.map(product => {
         const correspondingOrder = orders.find(order => order.product_id === product.product_id);
@@ -124,7 +124,7 @@ const productController = {
         }
         return product;
       });
-      console.log(products);
+      //console.log(products);
       res.json(products);
     } catch (err) {
       console.error(err);

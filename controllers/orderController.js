@@ -214,6 +214,61 @@ const orderController = {
       });
     }
   },
+  //展示用户的所有历史订单
+  showAllOrders: async function (req, res, next) {
+    try {
+      const userId = req.session.user_id;
+      console.log('User ID:', userId);
+
+      const sellerId = req.session.user_id;
+      const buyerId = req.session.user_id;
+      console.log('Seller ID:', sellerId);
+      console.log('Buyer ID:', buyerId);
+      // 从数据库中获取订单数据
+      const sellerOrders = await Order.findOrdersBySellerId(sellerId);
+      const buyerOrders = await Order.findOrdersByBuyerId(buyerId);
+      console.log('Seller Orders:', sellerOrders);
+      console.log('Buyer Orders:', buyerOrders);
+
+      // 遍历卖家订单，获取并添加产品信息
+      for (let order of sellerOrders) {
+        const product = await Product.findById(order.product_id);
+        order.productDescription = product.product_description;
+        order.productCoverImage_url = product.coverImage_url;
+      }
+
+      // 遍历买家订单，获取并添加产品信息
+      for (let order of buyerOrders) {
+        const product = await Product.findById(order.product_id);
+        order.productDescription = product.product_description;
+        order.productCoverImage_url = product.coverImage_url;
+      }
+      console.log('Seller Orders:', sellerOrders);
+      console.log('Buyer Orders:', buyerOrders);
+      if (!sellerOrders || !buyerOrders) {
+        return res.status(404).json({
+          code: 404,
+          message: '订单未找到'
+        });
+      }
+
+      // 返回订单数据给用户
+      res.status(200).json({
+        code: 200,
+        message: '订单获取成功',
+        data: {
+          sellerOrders: sellerOrders,
+          buyerOrders: buyerOrders
+        }
+      });
+    } catch (error) {
+      res.status(500).json({
+        code: 500,
+        message: '获取订单时发生错误',
+        error: error.message
+      });
+    }
+  },
   // 有关订单的其他方法
   // ### 请你补充或完善 ###
 }
