@@ -51,6 +51,9 @@ router.post('/createOrder', checkLogin, orderController.createOrder);
 //展示订单
 router.get('/showOrder', orderController.showOrder);
 
+//展示全部订单
+router.get('/showAllOrders', orderController.showAllOrders);
+
 //删除订单
 router.get('/cancelOrder', orderController.cancelOrder);
 
