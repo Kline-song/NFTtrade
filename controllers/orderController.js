@@ -3,10 +3,7 @@ const Order = require('../models/order.js');
 const User = require('../models/user.js');
 const Product = require('../models/product.js');
 
-// 以下为未实现的函数伪代码
-
 const orderController = {
-
   // 创建一个订单
   createOrder: async function (req, res, next) {
     try {
@@ -19,6 +16,16 @@ const orderController = {
       }
 
       const seller_id = req.session.user_id;
+
+      //请写出这样一段代码逻辑：如果商品未在出售中，则创建订单，否则返回错误信息。要怎么检查商品是否在出售中呢？就要用product_id去查order中的相关订单，然后看status是否为1，如果是1，则说明商品在出售中，如果不是1，则说明商品不在出售中。
+
+      const orderList = await Order.findOrdersByProductId(product_id);
+      console.log('Order:', orderList);
+      
+      if (orderList.length > 0) {
+        throw new Error('商品正在出售中');
+      }
+      
 
       // 验证seller_id是否存在
       if (!seller_id) {
