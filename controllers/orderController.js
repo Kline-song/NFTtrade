@@ -11,6 +11,8 @@ const orderController = {
   createOrder: async function (req, res, next) {
     try {
       const { product_id, order_amount } = req.body;
+      console.log('Product ID:', product_id);
+      console.log('Order Amount:', order_amount);
       // 验证请求参数
       if (!product_id || !order_amount) {
         throw new Error('product_id或order_amount参数缺失');
@@ -34,7 +36,7 @@ const orderController = {
 
     } catch (error) {
       // 错误处理
-      if (error.message.includes('缺失') || error.message.includes('类型错误')) {
+      if (error.message.includes('缺失') || error.message.includes('类型错误') || error.message.includes('商品正在出售')) {
         res.status(400).json({ code: 400, message: error.message });
       } else {
         res.status(500).json({ code: 500, message: '创建订单时发生错误', error: error.message });
