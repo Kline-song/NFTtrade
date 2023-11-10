@@ -21,8 +21,6 @@ class Order extends Base {
     }
   }
 
-  // 以下是未实现的函数
-
   // Get transaction history of an NFT 由productController调用
   async getNFTTransactionHistory(nftId) {
     // Implement DB query to fetch transaction history of a specific NFT using nftId
