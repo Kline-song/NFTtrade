@@ -34,24 +34,15 @@
           <div class="collection-info">
             <h3>{{ item.product_name }}</h3>
             <p>ID: {{ item.product_id }}</p>
-            <!-- <p>购入价格: {{ item.price }}</p>
-            <p>售卖情况: {{ item.status ? '在架' : '不在架' }}</p> -->
-            <button class="sellbtn" @click="Seller">售出</button>
-
+            <button class="sellbtn" @click="openSellDialog(item.product_id)">售出</button>
             <el-dialog v-model="showModal1" title="填写商品信息" @close="showModal1 = false">
               <el-form>
-                <!-- <el-form-item label="商品名称">
-                  <el-input v-model="productName"></el-input>
-                </el-form-item> -->
                 <el-form-item label="价格">
                   <el-input v-model="price"></el-input>
                 </el-form-item>
-                <!-- <el-form-item label="商品简介">
-                  <el-input v-model="productDescription"></el-input>
-                </el-form-item> -->
               </el-form>
               <span slot="footer" class="dialog-footer">
-                <el-button type="primary" @click="sellProduct(item.product_id)" class="sellbtn">出售</el-button>
+                <el-button type="primary" @click="sellProduct" class="sellbtn">出售</el-button>
                 <el-button @click="showModal1 = false" class="sellbtn">取消</el-button>
               </span>
             </el-dialog>
@@ -86,6 +77,11 @@ export default {
     this.getUserProducts();
   },
   methods: {
+
+    openSellDialog(productId) {
+      this.productIdToSell = productId; // 保存商品ID
+      this.showModal1 = true; // 打开对话框
+    },
     async getUserProducts() {
       try {
         // 此处设置了请求头，携带了 cookie，后续可以考虑将携带 cookie 的设置存储到 main.js 中
@@ -109,16 +105,18 @@ export default {
       this.fileType = null;
       this.metaData = null;
     },
-    async sellProduct(productId) {
+    async sellProduct() {
       try {
         const response = await axios.post('http://localhost:3000/createOrder', {
-          product_id: productId,
+          product_id: this.productIdToSell,
           order_amount: this.price
         }, { withCredentials: true });
 
         if (response.data.code === 200) {
           alert('订单创建成功！');
           this.showModal1 = false;  // 关闭弹窗
+        } else if (response.data.error) {
+          alert(`创建订单失败: ${response.data.error}`);
         } else {
           alert(`创建订单失败: ${response.data.message}`);
         }
@@ -215,18 +213,21 @@ export default {
   width: 200px;
   height: 200px;
 }
-.inputlabel{
+
+.inputlabel {
   margin-top: 20px;
   border-radius: 10px;
-  width:150px;
+  width: 150px;
 }
-.inputlabel2{
+
+.inputlabel2 {
   margin-top: 20px;
   border-radius: 10px;
-  width:300px;
-  height:20px;
+  width: 300px;
+  height: 20px;
 }
-.btn{
+
+.btn {
   color: white;
   padding: 5px 10px;
   height: 30px;
@@ -235,20 +236,25 @@ export default {
   border: none;
   border-radius: 10px;
 }
-.btn:hover{
+
+.btn:hover {
   background-color: rgba(177, 25, 26, 0.4);
 }
-.btn:active{
+
+.btn:active {
   background-color: rgba(177, 25, 26, 0.4);
 }
-label{
- text-align: left;
+
+label {
+  text-align: left;
 }
-.choose{
+
+.choose {
   margin-top: 5px;
   margin-bottom: 10px;
 }
-.product-input{
+
+.product-input {
   text-align: left;
   margin-left: 120px;
   margin-bottom: 10px;
