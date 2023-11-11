@@ -23,6 +23,10 @@
           </div>
           <div>
             <input type="submit" value="上传" class="btn" :disabled="isUploading" @click="handleUploadClick">
+            <div v-if="isUploading" class="loading-indicator">
+              <!-- Add a loading spinner or message here -->
+              <i class="fas fa-spinner fa-spin"></i> 上传中...
+            </div>
           </div>
         </form>
       </el-dialog>
@@ -115,6 +119,8 @@ export default {
         if (response.data.code === 200) {
           alert('订单创建成功！');
           this.showModal1 = false;  // 关闭弹窗
+          // 上传成功后刷新页面
+          window.location.reload();
         } else if (response.data.error) {
           alert(`创建订单失败: ${response.data.error}`);
         } else {
@@ -122,7 +128,7 @@ export default {
         }
       } catch (error) {
         console.error('创建订单时发生错误:', error.message);
-        alert('创建订单失败，请稍后再试。');
+        alert('创建订单失败，请稍后再试。(注：同一产品不可上传多次订单)');
       }
     },
     async uploadProduct() {
@@ -133,6 +139,7 @@ export default {
         alert('请确保已选择元数据文件和封面图片！');
         return;
       }
+
       this.isUploading = true; // 开始上传时禁用提交按钮
       const formData = new FormData();
       formData.append('metadata', metadataFile);
@@ -142,19 +149,28 @@ export default {
 
       try {
         const response = await axios.post('http://localhost:3000/createProduct', formData, { withCredentials: true });
+
+        // Check for success or failure
         if (response.data.code === 200) {
+          // Handle success
           alert('产品上传成功！');
-          this.showModal2 = false;  // 关闭弹窗
-          this.isUploading = false;
+          this.showModal2 = false;
+          // 上传成功后刷新页面
+          window.location.reload();
         } else {
+          // Handle failure
           alert(`上传失败: ${response.data.message}`);
-          this.isUploading = false;
         }
       } catch (error) {
+        // Handle error
         console.error('上传产品时发生错误:', error.message);
         alert('上传失败，请稍后再试。');
+      } finally {
+        // Reset isUploading after the upload completes (success, failure, or error)
+        this.isUploading = false;
       }
     },
+
     getFullUrl(relativeUrl) {
       return `http://localhost:3000${relativeUrl}`;
     },
@@ -258,5 +274,9 @@ label {
   text-align: left;
   margin-left: 120px;
   margin-bottom: 10px;
+}
+.loading-indicator {
+  margin-top: 10px;
+  font-size: 20px;
 }
 </style>
