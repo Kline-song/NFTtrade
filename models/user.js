@@ -2,8 +2,7 @@
 
 const Base = require('./base');
 const uuid = require('uuid');
-const { findById } = require('./order');
-const knex = require('../models/knex');
+const knex = require('./knex');
 
 class User extends Base {
   // 定义参数默认值为 user 表
