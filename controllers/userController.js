@@ -87,6 +87,39 @@ const userController = {
       res.json({ code: 500, message: '登录时发生错误。', data: e });
     }
   },
+  
+  //
+  showCurrency : async function (req, res, next) {
+    const user_id = req.session.user_id;
+    try {
+      const userData = await User.findById(user_id);
+      if (!userData) {
+        return res.status(401).json({ code: 401, message: '用户不存在' });
+      }
+      res.json({ code: 200, data: { currency: userData.currency } });
+    } catch (e) {
+      res.status(500).json({ code: 500, message: '获取余额失败', data: e });
+    }
+  },
+
+  // 获取用户余额
+  addCurrency: async function (req, res, next) {
+    const user_id = req.session.user_id;
+    const { currency } = req.body;
+    try {
+      const userData = await User.findById(user_id);
+      if (!userData) {
+        return res.status(401).json({ code: 401, message: '用户不存在' });
+      }
+      const newCurrency = userData.currency + currency;
+      const data = await User.update(user_id, { currency: newCurrency });
+      res.json({ code: 200, message: '充值成功', data: data });
+    } catch (e) {
+      res.json({ code: 500, message: '充值失败', data: e });
+    }
+  },
+
+
 }
 
 module.exports = userController;

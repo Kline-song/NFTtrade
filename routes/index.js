@@ -51,6 +51,9 @@ router.post('/createOrder', checkLogin, orderController.createOrder);
 //展示订单
 router.get('/showOrder', orderController.showOrder);
 
+//展示全部订单
+router.get('/showAllOrders', orderController.showAllOrders);
+
 //删除订单
 router.get('/cancelOrder', orderController.cancelOrder);
 
@@ -59,5 +62,11 @@ router.get('/pending_paymentOrde', orderController.pending_paymentOrder);
 
 //交易订单
 router.get('/getTransactionOrder/:id', orderController.getTransactionOrder);
+
+// 获取用户余额
+router.get('/showCurrency', checkLogin, userController.showCurrency);
+
+//充值钱包
+router.post('/addCurrency', checkLogin, userController.addCurrency);
 
 module.exports = router;

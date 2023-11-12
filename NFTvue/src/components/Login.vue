@@ -153,7 +153,7 @@ input[type="password"] {
   color: rgba(177, 25, 26, 1);
 }
 .login-now{
-  color:white;
+  color:rgba(177, 25, 26, 1);
 }
 .buttons{
   display: flex;

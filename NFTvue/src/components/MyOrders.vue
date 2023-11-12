@@ -1,77 +1,68 @@
 <template>
-  <h1>我的订单</h1>
-  <div class="order-page">
-    <div class="tabs">
-      <div
-          class="tab"
-          :class="{ active: currentTab === 'seller' }"
-          @click="changeTab('seller')"
-      >
-        卖家端
-      </div>
-      <div
-          class="tab"
-          :class="{ active: currentTab === 'buyer' }"
-          @click="changeTab('buyer')"
-      >
-        买家端
-      </div>
-    </div>
-    <div class="sub-tabs">
-      <div
-          class="sub-tab"
-          :class="{ active: currentSubTab === 'all' }"
-          @click="changeSubTab('all')"
-      >
-        全部
-      </div>
-      <div
-          class="sub-tab"
-          :class="{ active: currentSubTab === 'pending' }"
-          @click="changeSubTab('pending')"
-      >
-        待付款
-      </div>
-      <div
-          class="sub-tab"
-          :class="{ active: currentSubTab === 'completed' }"
-          @click="changeSubTab('completed')"
-      >
-        已完成
-      </div>
-      <div
-          class="sub-tab"
-          :class="{ active: currentSubTab === 'cancelled' }"
-          @click="changeSubTab('cancelled')"
-      >
-        已取消
-      </div>
-    </div>
-    <div class="order-list">
-      <div v-for="order in filteredOrders" :key="order.orderId" class="order-item">
-        <p>订单编号: {{ order.orderId }}</p>
-        <p>商品ID: {{ order.productId }}</p>
-      </div>
-      <p v-if="filteredOrders.length === 0">没有订单信息</p>
-    </div>
+  <div>
+    <h1>我的订单</h1>
+
+    <h2>卖家订单</h2>
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">订单ID</th>
+          <th scope="col">产品ID</th>
+          <th scope="col">产品描述</th>
+          <th scope="col">产品</th>
+          <th scope="col">订单状态</th>
+          <!-- 添加更多列标题 -->
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="order in sellerOrders" :key="order.id">
+          <td>{{ order.order_id }}</td>
+          <td>{{ order.product_id }}</td>
+          <td>{{ order.productDescription }}</td>
+          <td><img :src="getFullUrl(order.productCoverImage_url)" alt="Product Image" class="img-thumbnail"></td>
+          <td>{{ getOrderStatus(order.order_status) }}</td>
+          <!-- 添加更多单元格 -->
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>买家订单</h2>
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">订单ID</th>
+          <th scope="col">产品ID</th>
+          <th scope="col">产品描述</th>
+          <th scope="col">产品</th>
+          <th scope="col">订单状态</th>
+          <!-- 添加更多列标题 -->
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="order in buyerOrders" :key="order.id">
+          <td>{{ order.order_id }}</td>
+          <td>{{ order.product_id }}</td>
+          <td>{{ order.productDescription }}</td>
+          <td><img :src="getFullUrl(order.productCoverImage_url)" alt="Product Image" class="img-thumbnail"></td>
+          <td>{{ getOrderStatus(order.order_status) }}</td>
+          <!-- 添加更多单元格 -->
+        </tr>
+      </tbody>
+    </table>
   </div>
 </template>
 
+
 <script>
+import axios from 'axios';
 export default {
-  name:'MyOrders',
+  name: 'MyOrders',
   data() {
     return {
       currentTab: 'seller',
       currentSubTab: 'all',
-      orders: [
-        { orderId: 1, productId: 1, role: 'seller', status: 'pending' },
-        { orderId: 2, productId: 2, role: 'seller', status: 'completed' },
-        { orderId: 3, productId: 3, role: 'seller', status: 'cancelled' },
-        { orderId: 4, productId: 4, role: 'buyer', status: 'pending' },
-        { orderId: 5, productId: 5, role: 'buyer', status: 'completed' },
-        { orderId: 6, productId: 6, role: 'buyer', status: 'cancelled' },
-      ]
+      sellerOrders: [],
+      buyerOrders: []
     };
   },
   computed: {
@@ -87,21 +78,67 @@ export default {
     }
   },
   methods: {
-    changeTab(tab) {
-      this.currentTab = tab;
+    async showALLOrders() {
+      try {
+        const response = await axios.get('http://localhost:3000/showAllOrders');
+        if (response.data.code === 200) {
+          this.sellerOrders = response.data.data.sellerOrders;
+          this.buyerOrders = response.data.data.buyerOrders;
+          console.log('sellerOrders:', this.sellerOrders);
+          console.log('buyerOrders:', this.buyerOrders);
+        } else {
+          console.error('Error getting user products:', response.data.message);
+        }
+      } catch (error) {
+        console.error(error);
+      }
     },
-    changeSubTab(subTab) {
-      this.currentSubTab = subTab;
+    getFullUrl(relativeUrl) {
+      return `http://localhost:3000${relativeUrl}`;
+    },
+    getOrderStatus(status) {
+      switch (status) {
+        case 0: return '已取消';
+        case 1: return '待交易';
+        case 2: return '已交易';
+        case 3: return '待付款';
+        default: return '未知状态';
+      }
     }
+  },
+  created() {
+    this.showALLOrders();
   }
 };
 </script>
 
 <style scoped>
 .order-page {
-  max-width: 800px; /* 设置最大宽度 */
-  margin-left: auto; /* 将页面居中 */
-  margin-right: auto; /* 将页面居中 */
+  max-width: 800px;
+  /* 设置最大宽度 */
+  margin-left: auto;
+  /* 将页面居中 */
+  margin-right: auto;
+  /* 将页面居中 */
+}
+
+.table {
+  margin-top: 20px;
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 15px;
+}
+
+.table th,
+.table td {
+  border: 1px solid #ddd;
+  padding: 15px;
+  text-align: left;
+}
+
+.img-thumbnail {
+  width: 100px;
+  height: auto;
 }
 
 .tabs {
