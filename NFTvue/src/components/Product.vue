@@ -15,10 +15,10 @@
       <div class="product-summary">
         <h2>{{ product.product_name }}</h2>
         <div class="product-price">
-          <span class="price-label">Price:</span>
+          <span class="price-label">价格:</span>
           <span class="price-value">{{ this.$route.params.order_amount }}</span>
         </div>
-        <p>{{ product.product_description }}</p>
+        <p>简介：{{ product.product_description }}</p>
 
 
         <button class="buy-btn" @click="confirmPurchase">购买</button>
@@ -78,6 +78,7 @@ export default {
       axios.get(`http://localhost:3000/getTransactionOrder/${productId}`, { withCredentials: true })
         .then(response => {
           this.message = response.data.message;
+          window.alert('购买成功!');
         })
         .catch(error => {
           console.error(error);
