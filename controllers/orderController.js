@@ -17,8 +17,6 @@ const orderController = {
 
       const seller_id = req.session.user_id;
 
-      //请写出这样一段代码逻辑：如果商品未在出售中，则创建订单，否则返回错误信息。要怎么检查商品是否在出售中呢？就要用product_id去查order中的相关订单，然后看status是否为1，如果是1，则说明商品在出售中，如果不是1，则说明商品不在出售中。
-
       const orderList = await Order.findOrdersByProductId(product_id);
       console.log('Order:', orderList);
       
@@ -49,78 +47,6 @@ const orderController = {
         res.status(500).json({ code: 500, message: '创建订单时发生错误', error: error.message });
         console.error(error);
       }
-    }
-  },
-
-
-  // 展示一个订单
-  showOrder: async function (req, res, next) {
-    try {
-      // 获取订单ID
-      const order_id = req.params.order_id;
-
-      // 从数据库中获取订单数据
-      const order = await Order.findById(order_id);
-
-      if (!order) {
-        // 如果订单不存在，则返回相应的错误响应
-        return res.status(404).json({
-          code: 404,
-          message: '订单未找到'
-        });
-      }
-      // 返回订单数据给用户
-      res.status(200).json({
-        code: 200,
-        message: '订单获取成功',
-        data: order
-      });
-    } catch (error) {
-      res.status(500).json({
-        code: 500,
-        message: '获取订单时发生错误',
-        error: error.message
-      });
-    }
-  },
-
-  //取消一个订单
-  cancelOrder: async function (req, res, next) {
-    try {
-      // 获取订单ID
-      const order_id = req.params.order_id;
-
-      // 从数据库中获取订单数据
-      const order = await Order.findById(order_id);
-
-      if (!order) {
-        return res.status(404).json({
-          code: 404,
-          message: '订单未找到'
-        });
-      }
-
-      if (order.order_status === 0) {
-        return res.status(400).json({
-          code: 400,
-          message: '订单已取消'
-        });
-      }
-
-      order.order_status = 0;
-      await order.save();
-
-      res.status(200).json({
-        code: 200,
-        message: '订单已成功取消',
-        data: order
-      });
-    } catch (error) {
-      res.status(500).json({
-        code: 500,
-        message: '取消订单时发生错误',
-        error: error.message
-      });
     }
   },
 
@@ -184,45 +110,6 @@ const orderController = {
     }
   },
 
-  //将订单加入购物车
-  pending_paymentOrder: async function (req, res, next) {
-    try {
-      // 获取订单ID
-      const order_id = req.params.order_id;
-
-      // 从数据库中获取订单数据
-      const order = await Order.findById(order_id);
-
-      if (!order) {
-        return res.status(404).json({
-          code: 404,
-          message: '订单未找到'
-        });
-      }
-
-      if (order.order_status === 3) {
-        return res.status(400).json({
-          code: 400,
-          message: '订单已加入购物车'
-        });
-      }
-
-      order.order_status = 3;
-      await order.save();
-
-      res.status(200).json({
-        code: 200,
-        message: '订单已成功加入购物车',
-        data: order
-      });
-    } catch (error) {
-      res.status(500).json({
-        code: 500,
-        message: '订单加入购物车时发生错误',
-        error: error.message
-      });
-    }
-  },
   //展示用户的所有历史订单
   showAllOrders: async function (req, res, next) {
     try {
@@ -278,8 +165,6 @@ const orderController = {
       });
     }
   },
-  // 有关订单的其他方法
-  // ### 请你补充或完善 ###
 }
 
 module.exports = orderController;
