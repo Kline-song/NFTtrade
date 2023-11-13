@@ -1,6 +1,7 @@
 const orderController = require('../controllers/orderController.js');
 const productController = require('../controllers/productController.js');
 const userController = require('../controllers/userController.js');
+const nftController = require('../controllers/nftController.js');
 
 // 登录中间件，确保用户已成功登录
 const checkLogin = require('../middlewares/checkLogin');
@@ -68,5 +69,11 @@ router.get('/showCurrency', checkLogin, userController.showCurrency);
 
 //充值钱包
 router.post('/addCurrency', checkLogin, userController.addCurrency);
+
+// 初始化RChain节点
+router.get('/nft/init', nftController.init);
+
+// 从RChain读取所有NFT的持有情况
+router.get('/nft/balances', nftController.getBalances);
 
 module.exports = router;

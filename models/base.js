@@ -27,6 +27,22 @@ class Base {
     return await knex(this.table).where('id', '=', id).del();
   }
 
+  // 指定参数更改
+  async updateWhere(whereParams, updateParams) {
+    return await knex(this.table).where(whereParams).update(updateParams);
+  }
+
+  // 指定参数删除
+  async deleteWhere(params) {
+    return await knex(this.table).where(params).del();
+  }
+
+  // 指定参数查询一个元素
+  async findWhere(params) {
+    return await knex(this.table).where(params).first();
+  }
+
+  // 保存
   async save(data) {
     try {
       return await knex(this.table).insert(data);

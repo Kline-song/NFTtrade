@@ -18,6 +18,16 @@ npm install -g express body-parser cookie-parser multer
 - 根据项目中提供的sql文件，创建名为`nftback`的数据库。
 打开`config.js`文件，并将数据库连接信息修改为你的本地数据库配置。
 
+### 4、部署RNode节点（可选）
+下载`rnode_0.13.0-alpha3_all.deb`。
+在终端中运行以下命令：
+```
+rnode run -s --data-dir ~/Desktop/rnode0 --shard-name dev --host 192.168.5.131 --api-host localhost --allow-private-addresses --validator-private-key 28a5c9ac133b4449ca38e9bdf7cacdce31079ef6b3ac2f0a080af83ecff98b36 --synchrony-constraint-threshold 0 --no-upnp --discovery-port 40400 --api-port-grpc-external 40401 --api-port-grpc-internal 40402 --api-port-http 40403 --protocol-port 40404 --api-port-admin-http 40405
+```
+可能需要更改的部分：
+- `--data-dir [RNode本地文件目录]`
+- `--host [IP地址]`
+
 ## 运行方法
 
 1. 在项目的根目录下运行：

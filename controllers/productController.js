@@ -2,10 +2,9 @@
 
 const Product = require('../models/product.js');
 const Order = require('../models/order.js');
+const nftService = require('./nftService.js');
 const pinFileToIPFS = require('../IPFS.js'); // 将文件上传至IPFS
-const axios = require('axios'); // 暂时仅用于与rchain接口交互
 const configs = require('../config'); // 引用配置文件
-const uuid = require('uuid'); // 用于模拟rchain的返回数据
 const path = require('path'); // 用于处理文件路径
 const fs = require('fs'); // 
 
@@ -66,13 +65,12 @@ const productController = {
       };
 
       // 发送请求到rchain，创建NFT
-      // const rchainResponse = await axios.post('RCHAIN_NFT_CREATION_ENDPOINT', nftData);
-      // 以下为测试代码，仅用于在接口没有写出来之前测试使用
+      var nft_id = await nftService.mint(product_name, product_description, metaData_url, owner_id);
       const rchainResponse = {
         status: 200,
         data: {
           transaction_status: 'success',
-          nft_identifier: uuid.v4()
+          nft_identifier: nft_id
         }
       };
 

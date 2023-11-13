@@ -145,21 +145,27 @@ const orderController = {
       }
 
       // 处理交易过程
-      // 减少买家资产（假设有相关的买家资产字段）
+      // 获取交易信息
       const buyer = await User.findById(userId);
       console.log('Buyer before transaction:', buyer);
+      const seller = await User.findById(order[0].seller_id);
+      console.log('Seller before transaction:', seller);
+      const product = await Product.findById(order[0].product_id);
+      console.log('Product before transaction:', product);
+      // 在RChain上进行NFT流转
+      var nft_id = await Product.findById(productId).nft_identifier;
+      var result = await nftService.transfer(nft_id, seller.user_id, buyer.user_id);
+      // TODO 转移失败异常处理
+
+      // 减少买家资产（假设有相关的买家资产字段）
       await User.update(buyer.user_id, { currency: buyer.currency - order[0].order_amount });
       console.log('Buyer after transaction:', await User.findById(userId));
 
       // 增加卖家资产（假设有相关的卖家资产字段）
-      const seller = await User.findById(order[0].seller_id);
-      console.log('Seller before transaction:', seller);
       await User.update(seller.user_id, { currency: seller.currency + order[0].order_amount });
       console.log('Seller after transaction:', await User.findById(order[0].seller_id));
 
       // 修改商品归属权（假设有相关的商品归属权字段）
-      const product = await Product.findById(order[0].product_id);
-      console.log('Product before transaction:', product);
       product.owner_id = userId;
       await Product.update(product.product_id, { owner_id: userId });
       console.log('Product after transaction:', await Product.findById(order[0].product_id));
