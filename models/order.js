@@ -21,13 +21,10 @@ class Order extends Base {
     }
   }
 
-  // Get transaction history of an NFT 由productController调用
-  async getNFTTransactionHistory(nftId) {
-    // Implement DB query to fetch transaction history of a specific NFT using nftId
-  }
   async findById(order_id) {
     return this.findBy(order_id, 'order_id');
   }
+
   async findOrdersByStatus(status) {
     try {
       const orders = await knex('order').where({ order_status: status });
@@ -36,6 +33,7 @@ class Order extends Base {
       throw err;
     }
   }
+
   async findOrdersByProductId(product_id) {
     try {
       const orders = await knex('order').where({ product_id, order_status: 1 });
@@ -44,9 +42,11 @@ class Order extends Base {
       throw err;
     }
   }
+
   async update(orderId, params) {
     return await knex('order').where('order_id', '=', orderId).update(params);
   }
+
   async findOrdersBySellerId(seller_id) {
     try {
       const orders = await knex('order').where({ seller_id: seller_id });
@@ -55,6 +55,7 @@ class Order extends Base {
       throw err;
     }
   }
+  
   async findOrdersByBuyerId(buyer_id) {
     try {
       const orders = await knex('order').where({ buyer_id: buyer_id });
