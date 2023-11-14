@@ -1,0 +1,215 @@
+new nftDataMapCh, nftOwnerMapCh, nftPriceMapCh, nftLogMapCh in {
+    nftDataMapCh!({
+        "id111": {
+            "name": "name111",
+            "description": "description111",
+            "metadataUrl": "metadataUrl111",
+            "coverImgUrl": "coverImgUrl111",
+            "creator": "creatorRevAddr111"
+        },
+        "id222": {
+            "name": "name222",
+            "description": Nil,
+            "metadataUrl": "metadataUrl222",
+            "coverImgUrl": "coverImgUrl222",
+            "creator": "creatorRevAddr222"
+        },
+    })|
+    nftOwnerMapCh!({
+        "id111": "RevAddr114",
+        "id222": "creatorRevAddr222"
+    })|
+    nftPriceMapCh!({
+        "id111": 100,
+        "id222": -1
+    })|
+    nftLogMapCh!({
+        "id111": [
+            {"from": Nil, "to": "RevAddr112", "price": 111, "timestamp": "111"},
+            {"from": "RevAddr112", "to": "RevAddr113", "price": 111, "timestamp": "111"},
+            {"from": "RevAddr113", "to": "RevAddr114", "price": 111, "timestamp": "111"}
+        ],
+        "id222": [
+            {"from": Nil, "to": "creatorRevAddr222", "price": 222, "timestamp": "111"}
+        ]
+    })|
+
+    // 根据id获取nftDataMap中对应的数据，包括name, description, metadataUrl, coverImgUrl, creator
+    contract @"dataOf"(@id, returnCh) = {
+        for (@nftDataMap <- nftDataMapCh) {
+            returnCh!(nftDataMap.getOrElse(id, -1))|
+            nftDataMapCh!(nftDataMap)
+        }
+    }|
+
+    // 根据id获取nftOwnerMap中对应的数据，包括owner；若id不存在则返回-1
+    contract @"ownerOf"(@id, returnCh) = {
+        for (@nftOwnerMap <- nftOwnerMapCh) {
+            returnCh!(nftOwnerMap.getOrElse(id, -1))|
+            nftOwnerMapCh!(nftOwnerMap)
+        }
+    }|
+
+    contract @"listNftsByOwner"(@owner, returnCh) = {
+        Nil
+    }|
+
+    // 根据id获取nftPriceMap中对应的数据，包括price；若id不存在则返回-1
+    contract @"priceOf"(@id, returnCh) = {
+        for (@nftPriceMap <- nftPriceMapCh) {
+            returnCh!(nftPriceMap.getOrElse(id, -1))|
+            nftPriceMapCh!(nftPriceMap)
+        }
+    }|
+
+    // 根据id获取nftLogMap中对应的数据，即包括{from, to, price, timestamp}的列表；若id不存在则返回空列表[]
+    contract @"logsOf"(@id, returnCh) = {
+        for (@nftLogMap <- nftLogMapCh) {
+            returnCh!(nftLogMap.getOrElse(id, []))|
+            nftLogMapCh!(nftLogMap)
+        }
+    }|
+
+    // 向nftDataMap插入新数据
+    contract @"insertNftData"(@id, @name, @description, @metadataUrl, @coverImgUrl, @creator, returnCh) = {
+        for (@nftDataMap <- nftDataMapCh) {
+            match(nftDataMap.contains(id)) {
+                true => {
+                    // 若id已存在，不能插入，错误码-1
+                    returnCh!(-1)|
+                    nftDataMapCh!(nftDataMap)
+                }
+                false => {
+                    returnCh!(1)|
+                    nftDataMapCh!(nftDataMap.union({
+                        id: {
+                            "name": name,
+                            "description": description,
+                            "metadataUrl": metadataUrl,
+                            "coverImgUrl": coverImgUrl,
+                            "creator": creator
+                        }
+                    }))
+                }
+            }
+        }
+    }|
+
+    // 向nftOwnerMap插入新数据
+    contract @"insertNftOwner"(@id, @owner, returnCh) = {
+        for (@nftOwnerMap <- nftOwnerMapCh) {
+            match(nftOwnerMap.contains(id)) {
+                true => {
+                    // 若id已存在，不能插入，错误码-1
+                    returnCh!(-1)|
+                    nftOwnerMapCh!(nftOwnerMap)
+                }
+                false => {
+                    returnCh!(1)|
+                    nftOwnerMapCh!(nftOwnerMap.union({id: owner}))
+                }
+            }
+        }
+    }|
+
+    // 向nftPriceMap插入新数据
+    contract @"insertNftPrice"(@id, @price, returnCh) = {
+        for (@nftPriceMap <- nftPriceMapCh) {
+            match(nftPriceMap.contains(id)) {
+                true => {
+                    // 若id已存在，不能插入，错误码-1
+                    returnCh!(-1)|
+                    nftPriceMapCh!(nftPriceMap)
+                }
+                false => {
+                    returnCh!(1)|
+                    nftPriceMapCh!(nftPriceMap.union({id: price}))
+                }
+            }
+        }
+    }|
+    
+    // 向nftLogMap插入新数据
+    contract @"insertNftLog"(@id, @from, @to, @price, @timestamp, returnCh) = {
+        for (@nftLogMap <- nftLogMapCh) {
+            match(nftLogMap.contains(id)) {
+                true => {
+                    // 若id已存在，不能插入，错误码-1
+                    returnCh!(-1)|
+                    nftLogMapCh!(nftLogMap)
+                }
+                false => {
+                    returnCh!(1)|
+                    nftLogMapCh!(nftLogMap.union({
+                        id: {
+                            {"from": from, "to": to, "price": price, "timestamp": timestamp}
+                        }
+                    }))
+                }
+            }
+        }
+    }|
+
+    // 记录NFT log，若id已存在则向id:[]的[]中增加记录，若id不存在则新增id:[]的映射
+    contract @"log"(@id, @from, @to, @price, @timestamp, returnCh) = {
+        for (@nftLogMap <- nftLogMapCh) {
+            match (nftLogMap.contains(id)) {
+                true => {
+                    // 若id已存在
+                    returnCh!(1)|
+                    nftLogMapCh!(nftLogMap.union({
+                        id: nftLogMap.get(id) ++ [{"from": from, "to": to, "price": price, "timestamp": timestamp}]
+                    }))
+                }
+                false => {
+                    // 若id不存在
+                    returnCh!(1)|
+                    nftLogMapCh!(nftLogMap.union({
+                        id: [{"from": from, "to": to, "price": price, "timestamp": timestamp}]
+                    }))
+                }
+            }
+        }
+    }|
+
+    contract @"updateNftOwner"(@id, @owner, returnCh) = {
+        for (@nftOwnerMap <- nftOwnerMapCh) {
+            returnCh!(1)|
+            nftOwnerMapCh!(nftOwnerMap.union({id: owner}))
+        }
+    }|
+
+    contract @"updateNftPrice"(@id, @price, returnCh) = {
+        for (@nftPriceMap <- nftPriceMapCh) {
+            returnCh!(1)|
+            nftPriceMapCh!(nftPriceMap.union({id: price}))
+        }
+    }|
+
+    // 铸造NFT
+    contract @"mint"(@id, @name, @description, @metadataUrl, @coverImgUrl, @timestamp, returnCh) = {
+        Nil
+        // 检查id是否已经存在，若已存在则返回错误码-1
+
+        // 获取deployerId并计算出对应的REV地址，作为creator的值记入nftDataMap
+    }|
+
+    // 转移NFT
+    contract @"transfer"(@id, @from, @to, @price, @timestamp, returnCh) = {
+        Nil
+        // 检查id是否存在，若不存在则返回错误码-1
+
+        // 检查id是否出售，若不出售则返回错误码-2
+
+        // 检查from是否是NFT的owner，若不是则返回错误码-3
+
+        // 检查to是否持有足够支付price的REV，若不是则返回错误码-4
+    }
+    
+    
+
+    // test
+    |new test, stdout(`rho:io:stdout`) in {
+        @"logsOf"!("id111", *stdout)
+    }
+}
