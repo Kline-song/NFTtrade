@@ -8,7 +8,7 @@ const path = require('path'); // 用于处理文件路径
 const fs = require('fs'); // 
 
 const productController = {
-  // 上传产品
+  // 上传产品 syh
   uploadProduct: async function (req, res, next) {
     // // 测试代码
     // console.log(req.files);  // 打印文件对象
@@ -96,18 +96,19 @@ const productController = {
     }
   },
 
-  // 展示全部商品
-  showProduct: async function (req, res, next) {
-    try {
-      const products = await Product.all();
-      res.status(200).json({ code: 200, message: '获取成功', data: products });
-    } catch (error) {
-      res.status(500).json({ code: 500, message: '获取产品时发生错误', error: error.message });
-    }
-  },
+  // // 展示全部商品
+  // showProduct: async function (req, res, next) {
+  //   try {
+  //     const products = await Product.all();
+  //     res.status(200).json({ code: 200, message: '获取成功', data: products });
+  //   } catch (error) {
+  //     res.status(500).json({ code: 500, message: '获取产品时发生错误', error: error.message });
+  //   }
+  // },
 
-  //展示待出售的全部商品
+  //展示待出售的全部商品 syh
   listProductsForSale: async function (req, res, next) {
+    // 改为查询NFT的价格
     try {
       const orders = await Order.findOrdersByStatus(1);
       // console.log(orders);
@@ -128,7 +129,7 @@ const productController = {
       res.status(500).json({ error: 'Internal server error' });
     }
   },
-  //查看单个商品详情 (Get details of a single product)
+  //查看单个商品详情 (Get details of a single product) cxy
   getProductDetails: async function (req, res, next) {
     const productId = req.params.id;
     try {
@@ -148,7 +149,7 @@ const productController = {
     }
   },
 
-  // 列出用户的products(List products owned by a user)
+  // 列出用户的products(List products owned by a user) cxy
   listUserProducts: async function (req, res, next) {
     const userId = req.session.user_id;
     try {
@@ -159,25 +160,25 @@ const productController = {
     }
   },
 
-  // 列出用户发布的待售products (List products for sale by a user)
-  listUserSaleNFTs: async function (req, res, next) {
-    // 涉及到用户id的使用，路由中应该加入登录检查中间件
-    const userId = req.session.user_id;
-    try {
-      // 获取当前用户作为卖家的全部订单
-      const orders = await Order.listBy({ seller_id: userId });
+  // // 列出用户发布的待售products (List products for sale by a user)
+  // listUserSaleNFTs: async function (req, res, next) {
+  //   // 涉及到用户id的使用，路由中应该加入登录检查中间件
+  //   const userId = req.session.user_id;
+  //   try {
+  //     // 获取当前用户作为卖家的全部订单
+  //     const orders = await Order.listBy({ seller_id: userId });
 
-      // 将待售物品id提取出来放入一个数组中
-      const productIdsForSale = orders.map(o => o.product_id);
+  //     // 将待售物品id提取出来放入一个数组中
+  //     const productIdsForSale = orders.map(o => o.product_id);
 
-      // Fetch all products using the extracted product_ids
-      const productsForSale = await Product.listByIdArray({ product_id: productIdsForSale });
+  //     // Fetch all products using the extracted product_ids
+  //     const productsForSale = await Product.listByIdArray({ product_id: productIdsForSale });
 
-      res.status(200).json({ code: 200, data: productsForSale });
-    } catch (error) {
-      res.status(500).json({ code: 500, message: '获取用户待售产品时发生错误', error: error.message });
-    }
-  },
+  //     res.status(200).json({ code: 200, data: productsForSale });
+  //   } catch (error) {
+  //     res.status(500).json({ code: 500, message: '获取用户待售产品时发生错误', error: error.message });
+  //   }
+  // },
 
   // // 查看NFT的交易历史 (View transaction history of an NFT)
   // getNFTTransactionHistory: async function (req, res, next) {
