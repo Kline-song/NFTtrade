@@ -4,32 +4,51 @@
   </div>
   <div class="register1">
     <div class="content">
-    <h1 class="login-title">注册</h1>
-    <form @submit.prevent="register" class="content2">
-      <div class="form-group">
+      <h2>获取账户</h2>
+      <div id="app">
+        <!-- Input and Button Row -->
+        <div>
+          <input v-model="privateKey" placeholder="REV address/ETH address/Public key/Private key">
+          <button @click="generateAccount">New Account</button>
+        </div>
 
-        <input type="text" id="username" v-model="username" required />
-        <label for="username" class="input">用户名</label>
+        <!-- Textbox Rows (Initially Hidden) -->
+        <div v-if="accountGenerated">
+          <div class="info-row">
+            <div>Private Key:</div>
+            <input class="info-input" v-model="privateKey" readonly>
+            <button class="copy-button" @click="copyToClipboard('privateKey')">复制</button>
+          </div>
+          <div class="info-row">
+            <div>Public Key:</div>
+            <input class="info-input" v-model="publicKey" readonly>
+            <button class="copy-button" @click="copyToClipboard('publicKey')">复制</button>
+          </div>
+          <div class="info-row">
+            <div>ETH:</div>
+            <input class="info-input" v-model="eth" readonly>
+            <button class="copy-button" @click="copyToClipboard('eth')">复制</button>
+          </div>
+          <div class="info-row">
+            <div>REV:</div>
+            <input class="info-input" v-model="rev" readonly>
+            <button class="copy-button" @click="copyToClipboard('rev')">复制</button>
+          </div>
       </div>
-      <div class="form-group">
-
-        <input type="password" id="password" v-model="password"  required />
-        <label for="password" class="input" >密码</label>
       </div>
-      <div class="form-group">
-
-        <input type="password" id="confirmPassword" v-model="confirmPassword" required />
-        <label for="confirm"   class="input">确认密码</label>
-      </div>
-      <button type="submit">注     册</button>
-    </form>
+    </div>
+    <div class="content1">
+      <p>提示:在第一次登录本网站的时，点击获取一个账户。请用户自行保存好账户的相关信息，并使用REV地址登录。当用户遗忘REV地址时，可以使用私钥在上方输入框查询公钥与地址信息。</p>
     </div>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
-
+import {
+  getAddrFromPrivateKey,
+  newRevAddress,
+} from '@tgrospic/rnode-grpc-js';
 export default {
   name: 'Register',
   data() {
@@ -37,31 +56,80 @@ export default {
       username: '',
       password: '',
       fullWidth: document.documentElement.clientWidth,
-      fullHeight: document.documentElement.clientHeight
+      fullHeight: document.documentElement.clientHeight,
+
+      publicKey: '',
+      privateKey: '',
+      eth: '',
+      rev: '',
+      publicKeyResult: '',
+      privateKeyResult: '',
+      ethResult: '',
+      revResult: '',
+      accountGenerated: false,
     };
   },
   methods: {
-    async register() {
-      const { username, password, confirmPassword } = this;
-      try {
-        const response = await axios.post('http://localhost:3000/register', { username, password, confirmPassword }, { withCredentials: true });
-        if (response.data.code === 200) {
-          // 注册成功，跳转到登录页面
-          this.$router.push('/');
-          this.$message({
-            showClose: true,
-            message: '注册成功！',
-            type: 'success'
-          });
-        }
-      } catch (error) {
-        console.error(error);
-        this.$message.error(error.response.data.message);
-      }
-    },
     handleResize () {
       this.fullWidth = document.documentElement.clientWidth
       this.fullHeight = document.documentElement.clientHeight
+    },
+    //get account
+    async generateAccount() {
+      try {
+        if (this.privateKey) {
+          // If privateKey is provided, get addresses from it
+          const { pubKey, ethAddr, revAddr } = await getAddrFromPrivateKey(this.privateKey);
+
+          // Update the state or variables with the obtained values
+          this.publicKey = pubKey;
+          this.eth = ethAddr;
+          this.rev = revAddr;
+
+
+        } else {
+          // Generate a new REV address
+          const { privKey, pubKey, ethAddr, revAddr } = await newRevAddress();
+
+          // Update the state or variables with the generated values
+          this.publicKey = pubKey;
+          this.privateKey = privKey;
+          this.eth = ethAddr;
+          this.rev = revAddr;
+        }
+
+        // Update textboxes or any other UI elements
+        this.publicKeyResult = `Public Key: ${this.publicKey}`;
+        this.privateKeyResult = `Private Key: ${this.privateKey}`;
+        this.ethResult = `ETH: ${this.eth}`;
+        this.revResult = `REV: ${this.rev}`;
+
+        // Set flag to show the generated account information
+        this.accountGenerated = true;
+      } catch (error) {
+        console.error('生成新帐户时出错:', error);
+        // 错误处理
+      }
+    },
+    copyToClipboard(valueKey) {
+      const value = this[valueKey];
+
+      // Create a temporary input element
+      const tempInput = document.createElement('input');
+      tempInput.value = value;
+      document.body.appendChild(tempInput);
+
+      // Select the input value
+      tempInput.select();
+      tempInput.setSelectionRange(0, 99999); // For mobile devices
+
+      // Copy the text to the clipboard
+      document.execCommand('copy');
+
+      // Remove the temporary input
+      document.body.removeChild(tempInput);
+
+      alert(`Copied ${valueKey} to clipboard: ${value}`);
     }
   }
 };
@@ -85,8 +153,8 @@ export default {
   height: 101%;
 }
 .register1 {
-  margin-left: 420px;
-  width:400px;
+  margin-left: 385px;
+  width:450px;
   background-color: rgba(238,238,238,0.8);
   border:none;
   border-radius: 20px;
@@ -95,6 +163,7 @@ export default {
 
 h2 {
   text-align: center;
+  margin-top:0;
 }
 
 .form-group {
@@ -132,11 +201,11 @@ button {
   border: none;
   cursor: pointer;
   border-radius: 10px;
-  margin-left: 110px;
+  margin-left: 130px;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 35px;
+  margin-bottom: 20px;
 }
 button:hover{
   background-color: rgba(177, 25, 26, 0.6);
@@ -147,5 +216,36 @@ button:hover{
 }
 .input{
   margin-right:0px;
+}
+#app {
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+
+input {
+  width: 300px;
+  padding: 8px;
+  margin-bottom: 10px;
+}
+
+button {
+  padding: 8px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.info-input {
+  text-align: right; /* 添加这一行，使输入框右对齐 */
+  width: 200px;
+  padding: 8px;
+}
+.copy-button{
+  height:23px;
+  margin-left: 0px;
+  width:80px;
 }
 </style>
