@@ -20,6 +20,7 @@ router.get('/', function (req, res, next) {
 });
 
 
+
 // 用户登录
 router.post('/login', userController.loginUser);
 
@@ -31,12 +32,13 @@ router.get('/createProduct', function (req, res, next) {
 router.post('/createProduct', upload.fields([{ name: 'metadata' }, { name: 'coverImage' }]), productController.uploadProduct);
 
 // // 展示用户全部物品
-// router.get('/showProduct', checkLogin, productController.listUserProducts);
+// router.get('/showProduct',  productController.listUserProducts);
 
 //展示待出售的全部商品
 router.get('/showProductForSale', productController.listProductsForSale);
 
 //展示单个商品详情
+
 router.get('/product/:id', productController.getProductDetails);
 
 // //创建订单
