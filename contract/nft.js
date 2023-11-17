@@ -56,6 +56,15 @@ const nft_rho = () => {
                 nftDataMapCh!(nftDataMap)
             }
         }|
+        
+        
+         // 获取对应id的description属性
+        contract @"getDescription"(@id, returnCh) = {
+             for (@nftDataMap <- nftDataMapCh) {
+                 returnCh!(nftDataMap.getOrElse(id, {"description": -1}).get("description"))|
+                 nftDataMapCh!(nftDataMap)
+             }
+        }|
     
         // 根据id获取nftOwnerList中对应的数据，包括owner；若id不存在则返回-1
         contract @"ownerOf"(@id, returnCh) = {
@@ -398,6 +407,13 @@ const mint_rho = (id, name, description, metadataUrl, coverImgUrl, timestamp) =>
     }`;
 }
 
+const getDescription_rho = (id) => {
+    return `new returnCh in {
+        @"getDescription"!("${id}", *returnCh)
+    }`;
+}
+
+
 
 module.exports = {
     nft_rho,
@@ -408,5 +424,7 @@ module.exports = {
     listNftByAddr_rho,
     listNftLogByAddr_rho,
     getDeployerRevAddr_rho,
-    mint_rho
+    mint_rho,
+    getDescription_rho,
+
 };

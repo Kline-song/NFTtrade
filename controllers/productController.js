@@ -6,6 +6,8 @@ const pinFileToIPFS = require('../IPFS.js'); // 将文件上传至IPFS
 const configs = require('../config'); // 引用配置文件
 const path = require('path'); // 用于处理文件路径
 const fs = require('fs'); // 
+const nftService = require('../service/nftService')
+const orderService = require('../service/orderService')
 
 const productController = {
   // 上传产品
@@ -132,7 +134,9 @@ const productController = {
   getProductDetails: async function (req, res, next) {
     const productId = req.params.id;
     try {
-      const productDetails = await Product.findById(productId);
+      //引用修改后的查询商品详情的函数
+      const productDetails = await nftService.getDescription('28a5c9ac133b4449ca38e9bdf7cacdce31079ef6b3ac2f0a080af83ecff98b36',productId);
+      //const productDetails = await Product.findById(productId);
       // console.log(productDetails);
       if (!productDetails) {
         // 如果没有找到产品，返回 404 状态码
@@ -152,7 +156,16 @@ const productController = {
   listUserProducts: async function (req, res, next) {
     const userId = req.session.user_id;
     try {
-      const products = await Product.listBy({ owner_id: userId });
+      //引用修改后的查询用户nft的函数:返回的是nft的id
+      const productids = await nftService.listNftByAddr('28a5c9ac133b4449ca38e9bdf7cacdce31079ef6b3ac2f0a080af83ecff98b36',userId);
+    //  const products = await Product.listBy({ owner_id: userId });
+      const products = [];
+      for (const id of productIds) {
+        // 调用 dataOf_rho 获取数据
+        const data = await orderService.dataOf_rho('28a5c9ac133b4449ca38e9bdf7cacdce31079ef6b3ac2f0a080af83ecff98b36',id);
+        // 将数据推到二维数组中
+        products.push(data);
+      }
       res.status(200).json({ code: 200, data: products });
     } catch (error) {
       res.status(500).json({ code: 500, message: '获取用户产品时发生错误', error: error.message });

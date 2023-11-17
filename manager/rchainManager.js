@@ -12,8 +12,8 @@ const SHARD_ID = 'root';
 async function deploy(validatorHost, privateKey, term, nameQty, phloLimit) {
     const PRIVATE_KEY = privateKey;
     const PUBLIC_KEY = rchainToolkit.utils.publicKeyFromPrivateKey(PRIVATE_KEY); // 直接获取公钥
-    
-    
+
+
     // 获取当前时间戳
     const _timestamp = new Date().valueOf();
 
@@ -66,7 +66,7 @@ async function deploy(validatorHost, privateKey, term, nameQty, phloLimit) {
     } catch (err) {
         console.log(err);
     }
-    
+
     // 获取propose返回结果
     let proposeResponse;
     try {
@@ -99,6 +99,7 @@ async function getDataAtName(validatorHost, name) {
 
     // console.log(dataAtNameResponse);
     return new Promise((resolve) => {
+        console.log(dataAtNameResponse);
         data = JSON.parse(dataAtNameResponse);
         resolve(data);
     });
