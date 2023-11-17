@@ -3,9 +3,7 @@
 const Product = require('../models/product.js');
 const Order = require('../models/order.js');
 const pinFileToIPFS = require('../IPFS.js'); // 将文件上传至IPFS
-const axios = require('axios'); // 暂时仅用于与rchain接口交互
 const configs = require('../config'); // 引用配置文件
-const uuid = require('uuid'); // 用于模拟rchain的返回数据
 const path = require('path'); // 用于处理文件路径
 const fs = require('fs'); // 
 
@@ -58,21 +56,20 @@ const productController = {
       // 获取上传的表单数据
       const { product_name, product_description } = req.body;
 
-      const nftData = {
-        name: product_name,
-        description: product_description,
-        uri: metaData_url,
-        owner: owner_id
-      };
+    //   const nftData = {
+    //     name: product_name,
+    //     description: product_description,
+    //     uri: metaData_url,
+    //     owner: owner_id
+    //   };
 
       // 发送请求到rchain，创建NFT
-      // const rchainResponse = await axios.post('RCHAIN_NFT_CREATION_ENDPOINT', nftData);
-      // 以下为测试代码，仅用于在接口没有写出来之前测试使用
+      // var nft_id = await nftService.mint(product_name, product_description, metaData_url, owner_id);
       const rchainResponse = {
         status: 200,
         data: {
           transaction_status: 'success',
-          nft_identifier: uuid.v4()
+          nft_identifier: "test"
         }
       };
 
@@ -113,9 +110,9 @@ const productController = {
   listProductsForSale: async function (req, res, next) {
     try {
       const orders = await Order.findOrdersByStatus(1);
-      //console.log(orders);
+      // console.log(orders);
       const productIds = orders.map(order => order.product_id);
-      //console.log(productIds);
+      // console.log(productIds);
       let products = await Product.findProductsByIds(productIds);
       products = products.map(product => {
         const correspondingOrder = orders.find(order => order.product_id === product.product_id);
@@ -124,7 +121,7 @@ const productController = {
         }
         return product;
       });
-      //console.log(products);
+      // console.log(products);
       res.json(products);
     } catch (err) {
       console.error(err);
@@ -136,7 +133,7 @@ const productController = {
     const productId = req.params.id;
     try {
       const productDetails = await Product.findById(productId);
-      console.log(productDetails);
+      // console.log(productDetails);
       if (!productDetails) {
         // 如果没有找到产品，返回 404 状态码
         res.status(404).send({ message: 'Product not found' });
