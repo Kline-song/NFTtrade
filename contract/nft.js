@@ -15,7 +15,7 @@ const nft_rho = () => {
                 "metadataUrl": "metadataUrl222",
                 "coverImgUrl": "coverImgUrl222",
                 "creator": "creatorRevAddr222",
-                "price": -1
+                "price": 233
             },
         })|
         nftOwnerListCh!([
