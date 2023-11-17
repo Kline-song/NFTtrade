@@ -7,7 +7,7 @@ const configs = require('../config'); // 引用配置文件
 const path = require('path'); // 用于处理文件路径
 const fs = require('fs'); // 
 const uuid = require('uuid');
-const nftService = require('../services/nftService.js');
+const nftService = require('../service/nftService.js');
 
 const productController = {
   // 上传产品 syh
@@ -110,31 +110,31 @@ const productController = {
     //展示待出售的全部商品 syh
     listProductsForSale: async function (req, res, next) {
       try {
-      //   const orders = await Order.findOrdersByStatus(1);
-      // // console.log(orders);
-      // const productIds = orders.map(order => order.product_id);
-      // // console.log(productIds);
-      // let products = await Product.findProductsByIds(productIds);
-      // products = products.map(product => {
-      //   const correspondingOrder = orders.find(order => order.product_id === product.product_id);
-      //   if (correspondingOrder) {
-      //     product.order_amount = correspondingOrder.order_amount;
-      //   }
-      //   return product;
-        const nftsForSale = await nftService.listNftsForSale();
+        const response = await nftService.listNftsForSale();
 
-        // 处理返回的NFT数据以符合现有产品数据结构
-        let products = nftsForSale.map(nft => {
-          return {
-            product_id: nft.id, // 假设NFT的id对应于product_id
-            name: nft.name,
-            description: nft.description,
-            metadataUrl: nft.metadataUrl,
-            coverImgUrl: nft.coverImgUrl,
-            creator: nft.creator,
-            price: nft.price,
-            // 可能需要添加更多字段以符合Product模型
-          };
+        if (!response.exprs || !Array.isArray(response.exprs) || response.exprs.length === 0) {
+            console.log("No NFT data found");
+            return;
+        }
+    
+        if (!response.exprs[0].expr || !response.exprs[0].expr.ExprMap) {
+            console.log("Invalid NFT data structure");
+            return;
+        }
+    
+        const nftsData = response.exprs[0].expr.ExprMap.data; // 安全访问 data 对象
+    
+        let products = Object.keys(nftsData).map(key => {
+            const nft = nftsData[key]; // 直接访问 nft 属性
+            return {
+                product_id: key,
+                name: nft.name.data, // 直接访问 data 属性
+                description: nft.description, // 添加对不存在属性的检查
+                metadataUrl: nft.metadataUrl,
+                coverImgUrl: nft.coverImgUrl,
+                creator: nft.creator,
+                price: nft.price, // 价格可能需要特别处理
+            };
         });
 
         // 返回处理过的产品列表
