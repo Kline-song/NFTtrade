@@ -51,7 +51,7 @@ export default {
 
         //TODO:发送地址给后端（替换为你的后端端点的实际 URL）
         try {
-          const response = await axios.post('YOUR_BACKEND_ENDPOINT', { revAddress: this.address }, { withCredentials: true });
+          const response = await axios.post('http://localhost:3000/login', { revAddress: this.address }, { withCredentials: true });
           if (response.data.code === 200) {
             // 登录成功，跳转到首页
             this.$router.push('/home');
