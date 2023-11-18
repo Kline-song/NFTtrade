@@ -1,7 +1,5 @@
 // productController
 
-const Product = require('../models/product.js');
-const Order = require('../models/order.js');
 const pinFileToIPFS = require('../IPFS.js'); // 将文件上传至IPFS
 const configs = require('../config'); // 引用配置文件
 const path = require('path'); // 用于处理文件路径
@@ -11,7 +9,7 @@ const nftService = require('../service/nftService')
 const uuid = require('uuid');
 
 const productController = {
-  // 上传产品 syh
+  // 上传产品
   uploadProduct: async function (req, res, next) {
     // // 测试代码
     // console.log(req.files);  // 打印文件对象
@@ -54,20 +52,8 @@ const productController = {
 
       // 获取上传的表单数据
       const { product_name, product_description, privateKey } = req.body;
-      console.log("privateKey=");
-      console.log(privateKey);
-      console.log("product_name=");
-      console.log(product_name);
-      console.log("product_description=");
-      console.log(product_description);
       // 生成唯一的 nft_id
       const nft_id = uuid.v4();
-      console.log("nft_id=");
-      console.log(nft_id);
-      console.log("metaData_url=");
-      console.log(metaData_url);
-      console.log("coverImage_url=");
-      console.log(coverImage_url);
       //   const nftData = {
       //     name: product_name,
       //     description: product_description,
@@ -108,9 +94,7 @@ const productController = {
     }
   },
 
-    //展示待出售的全部商品 syh
-
-  //syh
+    //展示待出售的全部商品
   listProductsForSale: async function (req, res, next) {
     try {
       const nftsData = await nftService.listNftsForSale();
@@ -124,7 +108,6 @@ const productController = {
       res.status(500).json({ error: 'Internal server error' });
     }
   },
-
 
   //查看单个商品详情 (Get details of a single product)
   getProductDetails: async function (req, res, next) {
