@@ -2,53 +2,32 @@
   <div>
     <h1>我的订单</h1>
 
-    <h2>卖家订单</h2>
+    
     <table class="table">
       <thead>
         <tr>
-          <th scope="col">订单ID</th>
           <th scope="col">产品ID</th>
-          <th scope="col">产品描述</th>
-          <th scope="col">产品</th>
-          <th scope="col">订单状态</th>
+          <th scope="col">买家</th>
+          <th scope="col">卖家</th>
+          <th scope="col">金额</th>
+          <th scope="col">时间</th>
+          <th scope="col">产品图片</th>
           <!-- 添加更多列标题 -->
         </tr>
       </thead>
       <tbody>
-        <tr v-for="order in sellerOrders" :key="order.id">
-          <td>{{ order.order_id }}</td>
-          <td>{{ order.product_id }}</td>
-          <td>{{ order.productDescription }}</td>
-          <td><img :src="getFullUrl(order.productCoverImage_url)" alt="Product Image" class="img-thumbnail"></td>
-          <td>{{ getOrderStatus(order.order_status) }}</td>
+        <tr v-for="(order, index) in orders" :key="index">
+          <td>{{ order[0] }}</td>
+          <td>{{ order[1] }}</td>
+          <td>{{ order[2] }}</td>
+          <td>{{ order[3] }}</td>
+          <td>{{ order[4] }}</td>
+          <td><img :src="getFullUrl(order[6])" alt="Product Image" class="img-thumbnail"></td>
           <!-- 添加更多单元格 -->
         </tr>
       </tbody>
     </table>
 
-    <h2>买家订单</h2>
-    <table class="table">
-      <thead>
-        <tr>
-          <th scope="col">订单ID</th>
-          <th scope="col">产品ID</th>
-          <th scope="col">产品描述</th>
-          <th scope="col">产品</th>
-          <th scope="col">订单状态</th>
-          <!-- 添加更多列标题 -->
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="order in buyerOrders" :key="order.id">
-          <td>{{ order.order_id }}</td>
-          <td>{{ order.product_id }}</td>
-          <td>{{ order.productDescription }}</td>
-          <td><img :src="getFullUrl(order.productCoverImage_url)" alt="Product Image" class="img-thumbnail"></td>
-          <td>{{ getOrderStatus(order.order_status) }}</td>
-          <!-- 添加更多单元格 -->
-        </tr>
-      </tbody>
-    </table>
   </div>
 </template>
 
@@ -61,8 +40,7 @@ export default {
     return {
       currentTab: 'seller',
       currentSubTab: 'all',
-      sellerOrders: [],
-      buyerOrders: []
+      orders: [],
     };
   },
   computed: {
@@ -80,17 +58,14 @@ export default {
   methods: {
     async showALLOrders() {
       try {
-        const response = await axios.get('http://localhost:3000/showAllOrders');
-        if (response.data.code === 200) {
-          this.sellerOrders = response.data.data.sellerOrders;
-          this.buyerOrders = response.data.data.buyerOrders;
-          console.log('sellerOrders:', this.sellerOrders);
-          console.log('buyerOrders:', this.buyerOrders);
-        } else {
-          console.error('Error getting user products:', response.data.message);
-        }
-      } catch (error) {
-        console.error(error);
+        const response = await axios.post('http://localhost:3000/showAllOrders', { user_id }, { withCredentials: true }); 
+      if (response.data.code === 200) {
+        this.orders = response.data.data;
+      } else {
+        console.error('Error getting orders:', response.data.message);
+      }
+    } catch (error) {
+      console.error('Error:', error);
       }
     },
     getFullUrl(relativeUrl) {

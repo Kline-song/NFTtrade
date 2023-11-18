@@ -97,7 +97,7 @@ async function getDataAtName(validatorHost, name) {
         }
     );
 
-    // console.log(dataAtNameResponse);
+    console.log(dataAtNameResponse);
     return new Promise((resolve) => {
         data = JSON.parse(dataAtNameResponse);
         resolve(data);
