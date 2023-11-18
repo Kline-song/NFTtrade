@@ -8,7 +8,6 @@ const path = require('path'); // 用于处理文件路径
 const fs = require('fs'); // 
 
 const nftService = require('../service/nftService')
-const orderService = require('../service/orderService')
 const uuid = require('uuid');
 
 const productController = {
@@ -132,7 +131,7 @@ const productController = {
     const productId = req.params.id;
     try {
       // 引用修改后的查询商品详情的函数
-      const productDetails = await orderService.dataOf_rho('28a5c9ac133b4449ca38e9bdf7cacdce31079ef6b3ac2f0a080af83ecff98b36', productId);
+      const productDetails = await nftService.dataOf_rho('28a5c9ac133b4449ca38e9bdf7cacdce31079ef6b3ac2f0a080af83ecff98b36', productId);
 
       // 如果没有找到产品，返回 404 状态码
       if (!productDetails) {
@@ -167,7 +166,7 @@ const productController = {
       const products = {};
       for (const id of productIds) {
         // 调用 dataOf_rho 获取数据
-        const data = await orderService.dataOf_rho('28a5c9ac133b4449ca38e9bdf7cacdce31079ef6b3ac2f0a080af83ecff98b36', id);
+        const data = await nftService.dataOf_rho('28a5c9ac133b4449ca38e9bdf7cacdce31079ef6b3ac2f0a080af83ecff98b36', id);
         // 将数据添加到映射中，以id为键
         products[id] = data;
         //console.log("dataaaaaaaaaaaaaaaa:",data);

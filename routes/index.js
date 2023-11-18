@@ -60,7 +60,7 @@ router.post('/showAllOrders', orderController.showAllOrders);
 // router.get('/pending_paymentOrde', orderController.pending_paymentOrder);
 
 //交易订单
-router.get('/getTransactionOrder/:id', orderController.getTransactionOrder);
+router.post('/getTransactionOrder/:id', orderController.getTransactionOrder);
 
 // // 获取用户余额
 // router.get('/showCurrency',  userController.showCurrency);
