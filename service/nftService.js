@@ -54,6 +54,17 @@ async function getDescription(privateKey,nft_id){
     })
 }
 
+async function dataOf_rho(privateKey, id) {
+    const term = nft.dataOf_rho(id);
+    var names = await rchainManager.deploy(`localhost`, privateKey, term, 1, 100000000);
+    var data = await rchainManager.getDataAtName(`localhost`, names[0]);
+    return new Promise((resolve) => {
+        data = rchainManager.convertRChainData(data);
+        console.log(data);
+        resolve(data);
+    })
+}
+
 //通过地址查询某人持有的所有nft信息
 async function listNftByAddr(privateKey,addr){
     const term = nft.listNftByAddr_rho(addr);
@@ -74,4 +85,5 @@ module.exports = {
     listNftsForSale,
     getDescription,
     listNftByAddr,
+    dataOf_rho,
 };

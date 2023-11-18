@@ -11,20 +11,29 @@
           <th scope="col">卖家</th>
           <th scope="col">金额</th>
           <th scope="col">时间</th>
+          <th scope="col" class="hidden"></th>
           <th scope="col">产品图片</th>
           <!-- 添加更多列标题 -->
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(order, index) in orders" :key="index">
-          <td>{{ order[0] }}</td>
+        <template v-for="(orderList, key, index1) in orders" :key="index1">
+          <!-- <td>{{ order[0] }}</td>
           <td>{{ order[1] }}</td>
           <td>{{ order[2] }}</td>
           <td>{{ order[3] }}</td>
           <td>{{ order[4] }}</td>
-          <td><img :src="getFullUrl(order[6])" alt="Product Image" class="img-thumbnail"></td>
+          <td><img :src="getFullUrl(order[6])" alt="Product Image" class="img-thumbnail"></td> -->
+          <tr v-for="(order, index2) in orderList">
+              <template v-for="(orderItem, index3) in order" :key="index3">
+                <td v-if="index3 <= 4">{{orderItem}}</td>
+                <td v-else-if="index3 = 6">
+                    <img :src="getFullUrl(orderItem)" alt="" class="img-thumbnail">
+                </td>
+              </template>
+          </tr>
           <!-- 添加更多单元格 -->
-        </tr>
+        </template>
       </tbody>
     </table>
 
@@ -159,7 +168,9 @@ export default {
   padding: 10px;
   margin-bottom: 10px;
 }
-
+.hidden {
+  visibility: hidden;
+}
 .order-item p {
   margin: 5px 0;
 }

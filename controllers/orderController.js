@@ -59,11 +59,13 @@ const orderController = {
   getTransactionOrder: async function (req, res, next) {
     try {
       const productId = req.params.id;
+      const { privateKey } = req.body;
       console.log('Product ID:', productId);
-
+      console.log('privateKey:',privateKey);
       //获得商品的拥有者
       const product = await orderService.dataOf_rho(privateKey, productId);
       const sellerId = product.creator;
+      console.log('sellerId:',sellerId)
       const amount = product.price;
       // // 从数据库中获取订单数据
       // const order = await Order.findOrdersByProductId(productId);
@@ -71,7 +73,7 @@ const orderController = {
 
       // const userId = req.session.user_id;
       const timestamp = Date.now();
-      const orderChage = await orderService.transferNft_rho(privateKey, productId, timestamp);
+      const orderChange = await orderService.transferNft_rho(privateKey, productId, timestamp);
       const revChange = await orderService.transferRev_rho(privateKey, sellerId, amount);
       // console.log('User ID:', userId);
 
@@ -107,11 +109,11 @@ const orderController = {
       // console.log('Order after transaction:', await Order.findById(order[0].order_id));
 
       // 返回订单信息和处理结果
-      if (!orderChage || revChange) {
+      if (!orderChange || !revChange) {
         throw new Error('交易失败');
       }
 
-      res.json({ code: 200, message: '交易成功', data: orderChage });
+      res.json({ code: 200, message: '交易成功', data: orderChange });
 
     } catch (error) {
       console.log('Error:', error);
@@ -140,14 +142,14 @@ const orderController = {
       const privateKey = "28a5c9ac133b4449ca38e9bdf7cacdce31079ef6b3ac2f0a080af83ecff98b36";
       // 获取订单数据
       const orders = await orderService.listNftLogByAddr_rho(privateKey, user_id);
-      console.log(orders);
+      
 
       for (let order of orders) {
         const product = await orderService.dataOf_rho(privateKey, order[0]);
         order[5] = product.metadataUrl;
         order[6] = product.coverImgUrl
       }
-
+      console.log(orders);
       // const sellerOrders = await Order.findOrdersBySellerId(sellerId);
       // const buyerOrders = await Order.findOrdersByBuyerId(buyerId);
       // console.log('Seller Orders:', sellerOrders);

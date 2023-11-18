@@ -18,7 +18,18 @@
             <span class="price-value">{{ product.price }}</span>
           </div>
           <p>简介：{{ product.description }}</p>
-          <button class="buy-btn" @click="confirmPurchase">购买</button>
+          <button class="sellbtn" @click="openSellDialog">购买</button>
+        <el-dialog v-model="showModal1" title="填写私钥" @close="showModal1 = false">
+              <el-form>
+                <el-form-item label="私钥">
+                  <el-input v-model="privateKey"></el-input>
+                </el-form-item>
+              </el-form>
+              <span slot="footer" class="dialog-footer">
+                <el-button type="primary" @click="addToCart" class="sellbtn">购买</el-button>
+                <el-button @click="showModal1 = false" class="sellbtn">取消</el-button>
+              </span>
+            </el-dialog>
           <div class="message">{{ message }}</div>
         </div>
       </div>
@@ -49,7 +60,8 @@ export default {
     return {
       message: '',
       products: {},
-
+      showModal1:false,
+      privateKey:'',
     };
   },
   async created() {
@@ -63,15 +75,17 @@ export default {
     }
   },
   methods: {
-    confirmPurchase() {
-      if (window.confirm('你确定要购买这个商品吗？')) {
-        this.addToCart();
-      }
+    openSellDialog(){
+
+      this.showModal1 = true; // 打开对话框
+
+      this.privateKey = ''; // 初始化私钥
     },
     addToCart() {
       const productId = this.$route.params.product_id;
       console.log('productId:', productId);
-      axios.get(`http://localhost:3000/getTransactionOrder/${productId}`, { withCredentials: true })
+      console.log('privateKey:',this.privateKey);
+      axios.post(`http://localhost:3000/getTransactionOrder/${productId}`,{privateKey:this.privateKey}, { withCredentials: true })
           .then(response => {
             this.message = response.data.message;
             window.alert('购买成功!');

@@ -17,7 +17,7 @@
         <div class="content-grid">
 
           <div v-for="(product, productId) in products" :key="productId" class="content-box"
-               @click="goToProduct(productId, product.order_amount)">
+               @click="goToProduct(productId)">
             <img :src="getFullUrl(product.coverImgUrl)" alt="商品图片" class="product-pic" />
             <p>{{ product.name }}</p>
             <p>{{ product.description }}</p>
@@ -95,12 +95,11 @@ export default {
     goToMyOrder() {
       this.$router.push('/personalcenter/myorders');
     },
-    goToProduct(product_id, order_amount) {
+    goToProduct(product_id) {
       this.$router.push({
         name: 'Product',
         params: {
           product_id: product_id,
-          order_amount: order_amount
         }
       });
     },
