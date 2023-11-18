@@ -444,8 +444,7 @@ module.exports = {
     insertNftLog_rho,
     transferNft_rho,
     transferRev_rho,
-    ownerOf_rho
-
+    ownerOf_rho,
     getDescription_rho,
 
 };

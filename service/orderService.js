@@ -85,9 +85,8 @@ module.exports = {
     dataOf_rho,
     listNftLogByAddr_rho,
     transferRev_rho,
-    ownerOf_rho
+    ownerOf_rho,
     listNftLogByAddr_rho
-
 };
 
 

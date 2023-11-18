@@ -82,9 +82,9 @@ export default {
       privateKey: '',
     };
   },
-  // created() {
-  //   this.getUserProducts();
-  // },
+  created() {
+    this.getUserProducts();
+  },
   methods: {
 
     openSellDialog(productId) {
