@@ -1,8 +1,9 @@
 const nft = require('../contract/nft');
 const rchainManager = require("../manager/rchainManager");
+const timeUtil = require('../util/timeUtil');
 
 async function mint(privateKey, nft_id, name, description, metadataUrl, coverImageUrl) {
-    const timestamp = new Date().valueOf();
+    const timestamp = timeUtil.getCurrentDateString();
     console.log("timestamp=");
     console.log(timestamp);
     const term = nft.mint_rho(nft_id, name, description, metadataUrl, coverImageUrl, timestamp);
