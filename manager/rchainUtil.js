@@ -51,7 +51,9 @@ function convertRChainData(rchainData) {
                 obj[key2] = convertRChainData(obj[key2]);
             }
             return obj;
+
         } else if (key1 == "ExprTuple" || key1 == "ExprPar" || key1 == "ExprList") {
+
             return convertRChainData(obj[key1].data);
         } else if (key1.startsWith("Expr")) {
             return obj[key1].data;

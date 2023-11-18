@@ -61,28 +61,17 @@ const userController = {
 
   // 用户登录
   loginUser: async function (req, res, next) {
-    const { username, password } = req.body;
-
-    if (!username || !password) {
-      return res.status(400).json({ code: 400, message: '用户名和密码为必填项。' });
+    const { revAddress } = req.body;
+    console.log(revAddress);
+    if (!revAddress) {
+      return res.status(400).json({ code: 400, message: 'address为必填项。' });
     }
 
     try {
-      const userData = await User.findByUsername(username);
-
-      if (!userData) {
-        return res.status(401).json({ code: 401, message: '用户名或密码不正确。' });
-      }
-
-      const match = bcrypt.compareSync(password, userData.password);
-      if (match) {
         // 在登录成功后将 user_id 存储到会话中
-        req.session.user_id = userData.user_id;
-
-        res.json({ code: 200, message: '登录成功！', data: userData });
-      } else {
-        return res.status(401).json({ code: 401, message: '用户名或密码不正确。' });
-      }
+        req.session.user_id = revAddress;
+        res.json({ code: 200, message: '登录成功！', data: revAddress});
+      
     } catch (e) {
       res.json({ code: 500, message: '登录时发生错误。', data: e });
     }

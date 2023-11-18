@@ -21,6 +21,10 @@
             <label>商品描述：</label>
             <textarea v-model='productDescription' class="inputlabel2"></textarea>
           </div>
+          <div class="product-input">
+            <label>私钥：</label>
+            <input type='text' v-model='privateKey' class="inputlabel">
+          </div>
           <div>
             <input type="submit" value="上传" class="btn" :disabled="isUploading" @click="handleUploadClick">
             <div v-if="isUploading" class="loading-indicator">
@@ -75,11 +79,12 @@ export default {
       fileType: null,
       metaData: null,
       isUploading: false, // 添加 isUploading 数据属性用于跟踪上传状态
+      privateKey: '',
     };
   },
-  created() {
-    this.getUserProducts();
-  },
+  // created() {
+  //   this.getUserProducts();
+  // },
   methods: {
 
     openSellDialog(productId) {
@@ -146,6 +151,7 @@ export default {
       formData.append('coverImage', coverImageFile);
       formData.append('product_name', this.productName);
       formData.append('product_description', this.productDescription);
+      formData.append('privateKey', this.privateKey);
 
       try {
         const response = await axios.post('http://localhost:3000/createProduct', formData, { withCredentials: true });
@@ -156,7 +162,7 @@ export default {
           alert('产品上传成功！');
           this.showModal2 = false;
           // 上传成功后刷新页面
-          window.location.reload();
+          // window.location.reload();
         } else {
           // Handle failure
           alert(`上传失败: ${response.data.message}`);

@@ -1,7 +1,6 @@
 const nft = require('../contract/nft');
 const rchainManager = require("../manager/rchainManager");
 
-
 async function priceOf_rho(privateKey, id) {
     const term = nft.priceOf_rho(id);
     var names = await rchainManager.deploy(`localhost`, privateKey, term, 1, 100000000);
@@ -23,6 +22,7 @@ async function insertNftLog_rho(privateKey, id, from, to, price, timestamp) {
         resolve(data);
     })
 }
+
 
 async function transferNft_rho(privateKey, id, timestamp) {
     const term = nft.transferNft_rho(id, timestamp);
@@ -77,6 +77,7 @@ async function ownerOf_rho(privateKey, id) {
         resolve(data);
     })
 }
+
 module.exports = {
     priceOf_rho,
     insertNftLog_rho,
@@ -85,6 +86,8 @@ module.exports = {
     listNftLogByAddr_rho,
     transferRev_rho,
     ownerOf_rho
+    listNftLogByAddr_rho
+
 };
 
 

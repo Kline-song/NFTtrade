@@ -10,6 +10,7 @@ const nft_rho = () => {
                 "price": 100
             },
             "id222": {
+
                 "name": "nft-garden",
                 "description": "一张花园的图片",
                 "metadataUrl": "https://scarlet-defensive-swallow-675.mypinata.cloud/ipfs/QmWeRBwWk3XnicuC96sstiVWhbKhJGfRa1MMJJ8tVZnag1",
@@ -65,6 +66,15 @@ const nft_rho = () => {
                 returnCh!(nftDataMap.getOrElse(id, -1))|
                 nftDataMapCh!(nftDataMap)
             }
+        }|
+        
+        
+         // 获取对应id的description属性
+        contract @"getDescription"(@id, returnCh) = {
+             for (@nftDataMap <- nftDataMapCh) {
+                 returnCh!(nftDataMap.getOrElse(id, {"description": -1}).get("description"))|
+                 nftDataMapCh!(nftDataMap)
+             }
         }|
     
         // 根据id获取nftOwnerList中对应的数据，包括owner；若id不存在则返回-1
@@ -393,6 +403,7 @@ const mint_rho = (id, name, description, metadataUrl, coverImgUrl, timestamp) =>
     }`;
 }
 
+
 const listNftLogById_rho = (id) => {
     return `new returnCh in {
         @"listNftLogById"!("${id}", *returnCh)
@@ -411,6 +422,13 @@ const transferNft_rho = (id, timestamp) => {
     }`;
 }
 
+const getDescription_rho = (id) => {
+    return `new returnCh in {
+        @"getDescription"!("${id}", *returnCh)
+    }`;
+}
+
+
 module.exports = {
     nft_rho,
     getNftDataMap_rho,
@@ -421,9 +439,13 @@ module.exports = {
     listNftLogByAddr_rho,
     getDeployerRevAddr_rho,
     mint_rho,
+
     listNftLogById_rho,
     insertNftLog_rho,
     transferNft_rho,
     transferRev_rho,
     ownerOf_rho
+
+    getDescription_rho,
+
 };
