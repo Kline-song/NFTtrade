@@ -41,6 +41,9 @@ router.get('/showProductForSale', productController.listProductsForSale);
 
 router.get('/product/:id', productController.getProductDetails);
 
+//展示某个用户的全部商品
+router.post('/showOwnerProduct',productController.listUserProducts);
+
 // //创建订单
 // router.post('/createOrder', checkLogin, orderController.createOrder);
 

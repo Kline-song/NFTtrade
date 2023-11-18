@@ -1,7 +1,7 @@
 <template>
   <div class="register" :style="{width: fullWidth+'px', height:fullHeight+'px'}">
     <div class="img_box" :style="{width: fullWidth+'px'}"></div>
-    </div>
+  </div>
   <div class="login-container">
     <div class="login-box">
       <h1 class="login-now">立即登录</h1>
@@ -11,8 +11,8 @@
         </div>
       </div>
       <div class="buttons">
-      <el-button class="button1" type="primary" @click="login">登录</el-button>
-      <el-button class="button2" type="text" @click="register">获取账户</el-button>
+        <el-button class="button1" type="primary" @click="login">登录</el-button>
+        <el-button class="button2" type="text" @click="register">获取账户</el-button>
       </div>
     </div>
   </div>

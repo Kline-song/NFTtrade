@@ -101,43 +101,22 @@ const productController = {
   },
 
     //展示待出售的全部商品 syh
-    listProductsForSale: async function (req, res, next) {
-      try {
-        const response = await nftService.listNftsForSale();
 
-        if (!response.exprs || !Array.isArray(response.exprs) || response.exprs.length === 0) {
-            console.log("No NFT data found");
-            return;
-        }
-    
-        if (!response.exprs[0].expr || !response.exprs[0].expr.ExprMap) {
-            console.log("Invalid NFT data structure");
-            return;
-        }
-    
-        const nftsData = response.exprs[0].expr.ExprMap.data; // 安全访问 data 对象
-    
-        let products = Object.keys(nftsData).map(key => {
-            const nft = nftsData[key]; // 直接访问 nft 属性
-            return {
-                product_id: key,
-                name: nft.name.data, // 直接访问 data 属性
-                description: nft.description, // 添加对不存在属性的检查
-                metadataUrl: nft.metadataUrl,
-                coverImgUrl: nft.coverImgUrl,
-                creator: nft.creator,
-                price: nft.price, // 价格可能需要特别处理
-            };
-        });
+  //syh
+  listProductsForSale: async function (req, res, next) {
+    try {
+      const nftsData = await nftService.listNftsForSale();
+      //console.log("Response Data:", nftsData);
 
-        // 返回处理过的产品列表
-        res.json(products);
+      // 直接返回映射类型的数据
+      res.json(nftsData);
 
-      } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Internal server error' });
-      }
-    },
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  },
+
 
   //查看单个商品详情 (Get details of a single product)
   getProductDetails: async function (req, res, next) {
@@ -163,18 +142,23 @@ const productController = {
 
   // 列出用户的products(List products owned by a user)
   listUserProducts: async function (req, res, next) {
-    const userId = req.session.user_id;
+    // const userId = req.session.user_id;
+    const { userId } = req.body;
+    //console.log(req.body);
     try {
       //引用修改后的查询用户nft的函数:返回的是nft的id
-      const productids = await nftService.listNftByAddr('28a5c9ac133b4449ca38e9bdf7cacdce31079ef6b3ac2f0a080af83ecff98b36',userId);
-    //  const products = await Product.listBy({ owner_id: userId });
-      const products = [];
+      const productIds = await nftService.listNftByAddr('28a5c9ac133b4449ca38e9bdf7cacdce31079ef6b3ac2f0a080af83ecff98b36', userId);
+      //console.log("ids",productIds);
+      const products = {};
       for (const id of productIds) {
         // 调用 dataOf_rho 获取数据
-        const data = await orderService.dataOf_rho('28a5c9ac133b4449ca38e9bdf7cacdce31079ef6b3ac2f0a080af83ecff98b36',id);
-        // 将数据推到二维数组中
-        products.push(data);
+        const data = await orderService.dataOf_rho('28a5c9ac133b4449ca38e9bdf7cacdce31079ef6b3ac2f0a080af83ecff98b36', id);
+        // 将数据添加到映射中，以id为键
+        products[id] = data;
+        //console.log("dataaaaaaaaaaaaaaaa:",data);
       }
+      console.log("products", products);
+
       res.status(200).json({ code: 200, data: products });
     } catch (error) {
       res.status(500).json({ code: 500, message: '获取用户产品时发生错误', error: error.message });

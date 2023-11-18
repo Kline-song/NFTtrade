@@ -15,13 +15,16 @@
         </div>
 
         <div class="content-grid">
-          <div v-for="product in products" :key="product.product_id" class="content-box"
-            @click="goToProduct(product.product_id, product.order_amount)">
-            <img :src="getFullUrl(product.coverImage_url)" alt="商品图片" class="product-pic" />
-            <p>{{ product.product_name }}</p>
-            <p>{{ product.product_description }}</p>
-            <p>{{ product.order_amount }}</p>
+
+          <div v-for="(product, productId) in products" :key="productId" class="content-box"
+               @click="goToProduct(productId, product.order_amount)">
+            <img :src="getFullUrl(product.coverImgUrl)" alt="商品图片" class="product-pic" />
+            <p>{{ product.name }}</p>
+            <p>{{ product.description }}</p>
+            <p>{{ product.price }}</p>
           </div>
+
+
         </div>
 
 
@@ -45,7 +48,8 @@ export default {
   data() {
     return {
       userId: "用户1",
-      products: [],
+      products: {
+      },
       timerId: null,
       inputValue: '',
       photos: [
@@ -61,7 +65,7 @@ export default {
     this.fetchProducts();
 
     // Fetch products every 5 seconds
-    this.timerId = setInterval(this.fetchProducts, 5000);
+    //this.timerId = setInterval(this.fetchProducts, 5000);
   },
   computed: {
 
@@ -71,7 +75,8 @@ export default {
     async fetchProducts() {
       try {
         const response = await axios.get('http://localhost:3000/showProductForSale');
-        this.products = response.data;
+        // 将对象转换为数组
+        this.products = response.data; // 直接使用后端返回的对象
       } catch (error) {
         console.error(error);
       }
