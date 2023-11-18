@@ -23,10 +23,10 @@ router.get('/', function (req, res, next) {
 // // 用户登录
 router.post('/login', userController.loginUser);
 
-// // 创建物品
-// router.get('/createProduct', function (req, res, next) {
-//   res.render('createProduct'); // 'productForm' 是你的jade/pug视图文件的名称
-// });
+// 创建物品
+router.get('/createProduct', function (req, res, next) {
+  res.render('createProduct'); // 'productForm' 是你的jade/pug视图文件的名称
+});
 
 
 router.post('/createProduct', upload.fields([{ name: 'metadata' }, { name: 'coverImage' }]), productController.uploadProduct);
@@ -34,8 +34,8 @@ router.post('/createProduct', upload.fields([{ name: 'metadata' }, { name: 'cove
 // // 展示用户全部物品
 // router.get('/showProduct',  productController.listUserProducts);
 
-// //展示待出售的全部商品
-// router.get('/showProductForSale', productController.listProductsForSale);
+//展示待出售的全部商品
+router.get('/showProductForSale', productController.listProductsForSale);
 
 
 //展示单个商品详情
@@ -43,16 +43,16 @@ router.post('/createProduct', upload.fields([{ name: 'metadata' }, { name: 'cove
 router.get('/product/:id', productController.getProductDetails);
 
 //展示某个用户的全部商品
-router.post('/showOwnerProduct',productController.listUserProducts);
+router.post('/showOwnerProduct', productController.listUserProducts);
 
-// //创建订单
-// router.post('/createOrder', checkLogin, orderController.createOrder);
+//创建订单
+router.post('/createOrder',  orderController.createOrder);
 
 // //展示订单
 // router.get('/showOrder', orderController.showOrder);
 
-// //展示全部订单
-// router.get('/showAllOrders', orderController.showAllOrders);
+//展示全部订单
+router.post('/showAllOrders', orderController.showAllOrders);
 
 // //删除订单
 // router.get('/cancelOrder', orderController.cancelOrder);
@@ -60,13 +60,13 @@ router.post('/showOwnerProduct',productController.listUserProducts);
 // //将订单加入购物车
 // router.get('/pending_paymentOrde', orderController.pending_paymentOrder);
 
-// //交易订单
-// router.get('/getTransactionOrder/:id', orderController.getTransactionOrder);
+//交易订单
+router.get('/getTransactionOrder/:id', orderController.getTransactionOrder);
 
 // // 获取用户余额
-// router.get('/showCurrency', checkLogin, userController.showCurrency);
+// router.get('/showCurrency',  userController.showCurrency);
 
 // //充值钱包
-// router.post('/addCurrency', checkLogin, userController.addCurrency);
+// router.post('/addCurrency',  userController.addCurrency);
 
 module.exports = router;
