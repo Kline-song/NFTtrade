@@ -23,10 +23,10 @@ router.get('/', function (req, res, next) {
 // // 用户登录
 router.post('/login', userController.loginUser);
 
-// // 创建物品
-// router.get('/createProduct', function (req, res, next) {
-//   res.render('createProduct'); // 'productForm' 是你的jade/pug视图文件的名称
-// });
+// 创建物品
+router.get('/createProduct', function (req, res, next) {
+  res.render('createProduct'); // 'productForm' 是你的jade/pug视图文件的名称
+});
 
 
 router.post('/createProduct', upload.fields([{ name: 'metadata' }, { name: 'coverImage' }]), productController.uploadProduct);
@@ -34,8 +34,8 @@ router.post('/createProduct', upload.fields([{ name: 'metadata' }, { name: 'cove
 // // 展示用户全部物品
 // router.get('/showProduct',  productController.listUserProducts);
 
-// //展示待出售的全部商品
-// router.get('/showProductForSale', productController.listProductsForSale);
+//展示待出售的全部商品
+router.get('/showProductForSale', productController.listProductsForSale);
 
 
 //展示单个商品详情

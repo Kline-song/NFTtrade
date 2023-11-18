@@ -11,6 +11,7 @@ async function mint(privateKey, nft_id, name, description, metadataUrl, coverIma
         var names = await rchainManager.deploy(`localhost`, privateKey, term, 1, 100000000);
         var data = await rchainManager.getDataAtName('localhost',names[0]);
         data = rchainManager.convertRChainData(data);
+        console.log("data=");
         console.log(data);
         return data; 
     } catch (error) {
@@ -60,7 +61,7 @@ async function listNftByAddr(privateKey,addr){
     var data = await  rchainManager.getDataAtName(`localhost`,names[0]);
     return new Promise((resolve) => {
         data = rchainManager.convertRChainData(data);
-        //console.log(data);
+        console.log(data);
         resolve(data);
     })
 }
