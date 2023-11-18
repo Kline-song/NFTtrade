@@ -3,7 +3,7 @@ const protoLoader = require('@grpc/proto-loader');
 const rchainToolkit = require('@fabcotech/rchain-toolkit');
 const rchainToolkit_grpc = require('@fabcotech/rchain-toolkit/dist/grpc.js');
 const rchainHttp = require("./rchainHttp");
-const rchainUtil = require("./rchainUtil");
+const rchainUtil = require("../util/rchainDataUtil");
 
 const READ_ONLY_HOST = 'localhost';
 const VALIDATOR_HOST = 'localhost';

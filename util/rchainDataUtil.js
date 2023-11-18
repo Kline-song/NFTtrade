@@ -1,7 +1,7 @@
 function convertRChainData(rchainData) {
-    // 输入：从RChain接口返回的数据对象（已完成JSON反序列化）
-    // 例如：
+    // 输入：从RChain接口返回的数据对象（已完成JSON反序列化转变为JS对象）
     /*
+    例如：
     "ExprMap": {
         "data": {
             "name": {
@@ -38,6 +38,17 @@ function convertRChainData(rchainData) {
     }
     */
     // 输出：转化得到的JS对象
+    /*
+    例如：
+    {
+        name: 'name111',
+        description: 'description111',
+        price: 100,
+        creator: 'creatorRevAddr111',
+        metadataUrl: 'metadataUrl111',
+        coverImgUrl: 'coverImgUrl111'
+    }
+    */
     var obj = rchainData;
     for (let key1 in obj) {
         // console.log("key:", key1);

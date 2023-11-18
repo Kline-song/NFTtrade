@@ -3,6 +3,7 @@ const Order = require('../models/order.js');
 const User = require('../models/user.js');
 const Product = require('../models/product.js');
 const orderService = require('../service/orderService.js');
+const timeUtil = require('../util/timeUtil.js');
 const { priceOf_rho } = require('../contract/nft.js');
 const { privateKey } = require('@fabcotech/rchain-toolkit/dist/models/models.mock.js');
 
@@ -72,7 +73,7 @@ const orderController = {
       // console.log('Order:', order);
 
       // const userId = req.session.user_id;
-      const timestamp = Date.now();
+      const timestamp = timeUtil.getCurrentDateString();
       const orderChange = await orderService.transferNft_rho(privateKey, productId, timestamp);
       const revChange = await orderService.transferRev_rho(privateKey, sellerId, amount);
       // console.log('User ID:', userId);
