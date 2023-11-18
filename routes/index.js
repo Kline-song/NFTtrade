@@ -1,6 +1,7 @@
 const orderController = require('../controllers/orderController.js');
 const productController = require('../controllers/productController.js');
 const userController = require('../controllers/userController.js');
+const accountController = require('../controllers/accountController.js');
 
 // 登录中间件，确保用户已成功登录
 const checkLogin = require('../middlewares/checkLogin');
@@ -20,8 +21,11 @@ router.get('/', function (req, res, next) {
 });
 
 
-// // 用户登录
-router.post('/login', userController.loginUser);
+// 用户登录
+// router.post('/login', userController.loginUser);
+
+// 查询余额
+router.post('/account/balance', accountController.checkBalance);
 
 // 创建物品
 router.get('/createProduct', function (req, res, next) {

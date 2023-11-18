@@ -1,13 +1,13 @@
 const rchainManager = require("../manager/rchainManager");
+const nft = require("../contract/nft");
 
 async function checkBalance(revAddr) {
-    const checkBalance = require("../contract/checkBalance");
-    const term = checkBalance(revAddr);
-    var balance = await rchainManager.exploreDeploy(`localhost`, 40413, term);
+    const term = nft.checkBalance_rho(revAddr);
+    var names = await rchainManager.deploy(`localhost`, PRIVATE_KEY_1, term, 1, 100000000);
+    var balance = await rchainManager.getDataAtName(`localhost`, names[0]);
     // console.log(balance);
     return new Promise((resolve) => {
-        balance = rchainManager.convertRChainData(balance.expr);
-        balance = balance[0];
+        balance = rchainManager.convertRChainData(balance);
         resolve(balance);
     });
 }

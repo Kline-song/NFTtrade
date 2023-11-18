@@ -2,7 +2,6 @@ const accountService = require("../service/accountService");
 
 const accountController = {
     checkBalance: async function (req, res, next) {
-        // console.log(req.body);
         const {revAddr} = req.body;
         const balance = await accountService.checkBalance(revAddr);
         res.json({ code: 200, message: '查询余额成功', data: balance });
