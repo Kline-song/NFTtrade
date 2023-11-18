@@ -39,7 +39,6 @@ router.get('/showProductForSale', productController.listProductsForSale);
 
 
 //展示单个商品详情
-
 router.get('/product/:id', productController.getProductDetails);
 
 //展示某个用户的全部商品

@@ -4,33 +4,29 @@
   </div>
 
 
+  <div v-for="(product, id) in products" :key="id">
 
-  <div class="product-details">
-    <div class="product-info">
-      <div class="product-image">
-
-        <img :src="getFullUrl(product.coverImage_url)" alt="Product image">
-
-      </div>
-      <div class="product-summary">
-        <h2>{{ product.product_name }}</h2>
-        <div class="product-price">
-          <span class="price-label">价格:</span>
-          <span class="price-value">{{ this.$route.params.order_amount }}</span>
+    <div class="product-details">
+      <div class="product-info">
+        <div class="product-image">
+          <img :src="getFullUrl(product.coverImgUrl)" alt="Product image">
         </div>
-        <p>简介：{{ product.product_description }}</p>
-
-
-        <button class="buy-btn" @click="confirmPurchase">购买</button>
-        <div class="message">{{ message }}</div>
-
+        <div class="product-summary">
+          <h2>{{ product.name }}</h2>
+          <div class="product-price">
+            <span class="price-label">价格:</span>
+            <span class="price-value">{{ product.price }}</span>
+          </div>
+          <p>简介：{{ product.description }}</p>
+          <button class="buy-btn" @click="confirmPurchase">购买</button>
+          <div class="message">{{ message }}</div>
+        </div>
       </div>
     </div>
-    <div class="product-description">
+    <div class="product.description">
       <h3>商品详情</h3>
-
-      <div class="iframe-container" v-if="product && product.metaData_url">
-        <iframe :src="product.metaData_url" ></iframe>
+      <div class="iframe-container" v-if="product && product.metadataUrl">
+        <iframe :src="product.metadataUrl" ></iframe>
       </div>
 
     </div>
@@ -52,7 +48,7 @@ export default {
   data() {
     return {
       message: '',
-      product: null,
+      products: {},
 
     };
   },
@@ -61,7 +57,7 @@ export default {
     console.log('productId:', productId);
     try {
       const response = await axios.get(`http://localhost:3000/product/${productId}`);
-      this.product = response.data;
+      this.products = response.data;
     } catch (error) {
       console.error(error);
     }
@@ -76,14 +72,14 @@ export default {
       const productId = this.$route.params.product_id;
       console.log('productId:', productId);
       axios.get(`http://localhost:3000/getTransactionOrder/${productId}`, { withCredentials: true })
-        .then(response => {
-          this.message = response.data.message;
-          window.alert('购买成功!');
-        })
-        .catch(error => {
-          console.error(error);
-          this.message = 'An error occurred: ' + error;
-        });
+          .then(response => {
+            this.message = response.data.message;
+            window.alert('购买成功!');
+          })
+          .catch(error => {
+            console.error(error);
+            this.message = 'An error occurred: ' + error;
+          });
     },
     goToPersonalCenter() {
       this.$router.push('/personalcenter');
@@ -206,6 +202,7 @@ nav ul li a {
 }
 
 .iframe-container {
+  margin-left:300px;
   position: relative;
   overflow: hidden;
   width: 100%;
