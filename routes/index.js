@@ -42,16 +42,16 @@ router.get('/showProductForSale', productController.listProductsForSale);
 router.get('/product/:id', productController.getProductDetails);
 
 //展示某个用户的全部商品
-router.post('/showOwnerProduct',productController.listUserProducts);
+router.post('/showOwnerProduct', productController.listUserProducts);
 
-// //创建订单
-// router.post('/createOrder', checkLogin, orderController.createOrder);
+//创建订单
+router.post('/createOrder',  orderController.createOrder);
 
 // //展示订单
 // router.get('/showOrder', orderController.showOrder);
 
-// //展示全部订单
-// router.get('/showAllOrders', orderController.showAllOrders);
+//展示全部订单
+router.post('/showAllOrders', orderController.showAllOrders);
 
 // //删除订单
 // router.get('/cancelOrder', orderController.cancelOrder);
@@ -59,13 +59,13 @@ router.post('/showOwnerProduct',productController.listUserProducts);
 // //将订单加入购物车
 // router.get('/pending_paymentOrde', orderController.pending_paymentOrder);
 
-// //交易订单
-// router.get('/getTransactionOrder/:id', orderController.getTransactionOrder);
+//交易订单
+router.get('/getTransactionOrder/:id', orderController.getTransactionOrder);
 
 // // 获取用户余额
-// router.get('/showCurrency', checkLogin, userController.showCurrency);
+// router.get('/showCurrency',  userController.showCurrency);
 
 // //充值钱包
-// router.post('/addCurrency', checkLogin, userController.addCurrency);
+// router.post('/addCurrency',  userController.addCurrency);
 
 module.exports = router;

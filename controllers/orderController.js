@@ -10,15 +10,17 @@ const orderController = {
   // 创建一个订单
   createOrder: async function (req, res, next) {
     try {
-      const { product_id, order_amount } = req.body;
+      const { user_id, product_id, order_amount, privateKey } = req.body;
+      console.log('User ID:', user_id);
       console.log('Product ID:', product_id);
       console.log('Order Amount:', order_amount);
+      console.log('Private Key:', privateKey);
       // 验证请求参数
       if (!product_id || !order_amount) {
         throw new Error('product_id或order_amount参数缺失');
       }
 
-      const seller_id = req.body.revAddress;
+      const seller_id = user_id;
 
       const orderList = await orderService.priceOf_rho(privateKey, product_id);
       console.log('Order:', orderList);
@@ -32,10 +34,9 @@ const orderController = {
       if (!seller_id) {
         throw new Error('seller_id不存在');
       }
-      let buyer_id = null;
-      const timestamp = Date.now();
+
       // 创建订单
-      const order = await orderService.insertNftLog_rho(privateKey, product_id, seller_id, buyer_id, order_amount, timestamp);
+      const order = await orderService.updateNftPrice_rho(privateKey,product_id,order_amount);
       // 验证创建结果
       if (!order) {
         throw new Error('订单创建失败');
@@ -69,9 +70,9 @@ const orderController = {
       // console.log('Order:', order);
 
       // const userId = req.session.user_id;
-      const timestamp = Date.now(); 
-      const orderChage = await orderService.transferNft_rho(privateKey, productId,  timestamp);
-      const revChange = await orderService.transferRev_rho(privateKey,sellerId, amount);
+      const timestamp = Date.now();
+      const orderChage = await orderService.transferNft_rho(privateKey, productId, timestamp);
+      const revChange = await orderService.transferRev_rho(privateKey, sellerId, amount);
       // console.log('User ID:', userId);
 
       // if (!order) {
@@ -106,7 +107,7 @@ const orderController = {
       // console.log('Order after transaction:', await Order.findById(order[0].order_id));
 
       // 返回订单信息和处理结果
-      if (!orderChage||revChange) {
+      if (!orderChage || revChange) {
         throw new Error('交易失败');
       }
 
@@ -127,17 +128,21 @@ const orderController = {
     try {
 
       //获取用户的地址
-      const { user_id } = req.body;
+      const { userId } = req.body;
+      const user_id = userId;
+      console.log(user_id);
 
       // const sellerId = req.body.revAddress;
       // const buyerId = req.body.revAddress;
       // console.log('Seller ID:', sellerId);
       // console.log('Buyer ID:', buyerId);
 
+      const privateKey = "28a5c9ac133b4449ca38e9bdf7cacdce31079ef6b3ac2f0a080af83ecff98b36";
       // 获取订单数据
-      const orders = orderService.listNftLogByAddr_rho(privateKey, user_id);
-      
-      for (let order of orders){
+      const orders = await orderService.listNftLogByAddr_rho(privateKey, user_id);
+      console.log(orders);
+
+      for (let order of orders) {
         const product = await orderService.dataOf_rho(privateKey, order[0]);
         order[5] = product.metadataUrl;
         order[6] = product.coverImgUrl

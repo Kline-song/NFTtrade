@@ -2,7 +2,7 @@
   <div>
     <h1>我的订单</h1>
 
-    
+
     <table class="table">
       <thead>
         <tr>
@@ -58,14 +58,15 @@ export default {
   methods: {
     async showALLOrders() {
       try {
-        const response = await axios.post('http://localhost:3000/showAllOrders', { user_id }, { withCredentials: true }); 
-      if (response.data.code === 200) {
-        this.orders = response.data.data;
-      } else {
-        console.error('Error getting orders:', response.data.message);
-      }
-    } catch (error) {
-      console.error('Error:', error);
+        var userId = sessionStorage.getItem("revAddress");
+        const response = await axios.post('http://localhost:3000/showAllOrders', { userId }, { withCredentials: true });
+        if (response.data.code === 200) {
+          this.orders = response.data.data;
+        } else {
+          console.error('Error getting orders:', response.data.message);
+        }
+      } catch (error) {
+        console.error('Error:', error);
       }
     },
     getFullUrl(relativeUrl) {

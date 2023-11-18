@@ -32,7 +32,7 @@ async function testNft(){
 }
 // test();
 // testCheckBalance();
-// testNft();
+testNft();
 // testTransferRev();
 async function test1() {
     const nftsForSale = await nftService.listNftsForSale();
@@ -73,4 +73,4 @@ async function test2(){
 
 
 // test1();
-test2();
+// test2();

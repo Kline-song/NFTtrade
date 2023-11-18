@@ -48,6 +48,9 @@
                 <el-form-item label="价格">
                   <el-input v-model="price"></el-input>
                 </el-form-item>
+                <el-form-item label="私钥">
+                  <el-input v-model="privateKey"></el-input>
+                </el-form-item>
               </el-form>
               <span slot="footer" class="dialog-footer">
                 <el-button type="primary" @click="sellProduct" class="sellbtn">出售</el-button>
@@ -82,20 +85,23 @@ export default {
       privateKey: '',
     };
   },
-  created() {
-    this.getUserProducts();
-  },
+
+   created() {
+     this.getUserProducts();
+   },
   methods: {
 
     openSellDialog(productId) {
       this.productIdToSell = productId; // 保存商品ID
       this.showModal1 = true; // 打开对话框
+      this.price = ''; // 初始化价格
+      this.privateKey = ''; // 初始化私钥
     },
     async getUserProducts() {
       try {
         // 此处设置了请求头，携带了 cookie，后续可以考虑将携带 cookie 的设置存储到 main.js 中
         var userId = sessionStorage.getItem("revAddress");
-        const response = await axios.post('http://localhost:3000/showOwnerProduct', {userId}, { withCredentials: true });
+        const response = await axios.post('http://localhost:3000/showOwnerProduct', { userId }, { withCredentials: true });
         if (response.data.code === 200) {
           this.collection = response.data.data;
         } else {
@@ -117,9 +123,12 @@ export default {
     },
     async sellProduct() {
       try {
+        var userId = sessionStorage.getItem("revAddress");
         const response = await axios.post('http://localhost:3000/createOrder', {
+          user_id: userId,
           product_id: this.productIdToSell,
-          order_amount: this.price
+          order_amount: this.price,
+          privateKey: this.privateKey,
         }, { withCredentials: true });
 
         if (response.data.code === 200) {
@@ -282,6 +291,7 @@ label {
   margin-left: 120px;
   margin-bottom: 10px;
 }
+
 .loading-indicator {
   margin-top: 10px;
   font-size: 20px;

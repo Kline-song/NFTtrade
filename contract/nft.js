@@ -242,7 +242,8 @@ const nft_rho = () => {
                 if (nftDataMap.contains(id)) {
                     nftDataMapCh!(nftDataMap.union({
                         id: nftDataMap.get(id).set("price", price)
-                    }))
+                    }))|
+                    returnCh!(price)
                 } else {
                     returnCh!(-1)|
                     nftDataMapCh!(nftDataMap)
@@ -459,6 +460,14 @@ const checkBalance_rho = (revAddr) => {
     }`;
   }
 
+
+  const updateNftPrice_rho = (id, price) => {
+    return `new returnCh in {
+        @"updateNftPrice"!("${id}", ${price}, *returnCh)
+    }`;
+}
+
+
 module.exports = {
     nft_rho,
     getNftDataMap_rho,
@@ -477,4 +486,6 @@ module.exports = {
     ownerOf_rho,
     getDescription_rho,
     getDeployerRevAddr_rho,
+    updateNftPrice_rho,
+
 };
