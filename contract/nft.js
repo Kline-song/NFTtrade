@@ -460,11 +460,13 @@ const checkBalance_rho = (revAddr) => {
     }`;
   }
 
+
   const updateNftPrice_rho = (id, price) => {
     return `new returnCh in {
         @"updateNftPrice"!("${id}", ${price}, *returnCh)
     }`;
 }
+
 
 module.exports = {
     nft_rho,
@@ -485,4 +487,5 @@ module.exports = {
     getDescription_rho,
     getDeployerRevAddr_rho,
     updateNftPrice_rho,
+
 };

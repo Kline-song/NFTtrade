@@ -85,6 +85,7 @@ export default {
       privateKey: '',
     };
   },
+
    created() {
      this.getUserProducts();
    },

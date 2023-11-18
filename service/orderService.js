@@ -97,6 +97,7 @@ module.exports = {
     ownerOf_rho,
     listNftLogByAddr_rho,
     updateNftPrice_rho,
+
 };
 
 
