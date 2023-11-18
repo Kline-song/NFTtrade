@@ -32,7 +32,7 @@ async function testNft(){
 }
 // test();
 // testCheckBalance();
-testNft();
+// testNft();
 // testTransferRev();
 async function test1() {
     const nftsForSale = await nftService.listNftsForSale();
@@ -57,7 +57,20 @@ async function test1() {
 
     console.log(products);
 }
+async function test2(){
+    var privateKey='447a62c32ee4d9673d0f5026d47344916c153b08b76879381824c74437d627ab';
+    var addr='1111i6VNGZZmgGwqJdcpL1LEUTZUgRuxRWpCKCgpq4WXFmB1VeQMw';
+    const term = nft.listNftByAddr_rho(addr);
+    var names = await rchainManager.deploy('localhost',privateKey,term,1,1000000000);
+    var data = await  rchainManager.getDataAtName(`localhost`,names[0]);
+    return new Promise((resolve) => {
+        data = rchainManager.convertRChainData(data);
+        console.log("data=");
+        console.log(data);
+        resolve(data);
+    })
+}
 
 
-
-test1();
+// test1();
+test2();

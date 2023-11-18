@@ -55,10 +55,20 @@ const productController = {
 
       // 获取上传的表单数据
       const { product_name, product_description, privateKey } = req.body;
-
+      console.log("privateKey=");
+      console.log(privateKey);
+      console.log("product_name=");
+      console.log(product_name);
+      console.log("product_description=");
+      console.log(product_description);
       // 生成唯一的 nft_id
       const nft_id = uuid.v4();
-
+      console.log("nft_id=");
+      console.log(nft_id);
+      console.log("metaData_url=");
+      console.log(metaData_url);
+      console.log("coverImage_url=");
+      console.log(coverImage_url);
       //   const nftData = {
       //     name: product_name,
       //     description: product_description,
@@ -89,7 +99,6 @@ const productController = {
       //   const errorMsg = rchainResponse.data && rchainResponse.data.error ? rchainResponse.data.error : '未知错误';
       //   return res.status(400).json({ code: 400, message: '创建nft_identifier失败', detail: errorMsg });
       // }
-
       const productData = await nftService.mint(privateKey, nft_id, product_name, product_description, metaData_url, coverImage_url);
 
       res.status(200).json({ code: 200, message: '产品上传成功', data: productData });
@@ -164,6 +173,7 @@ const productController = {
   // 列出用户的products(List products owned by a user)
   listUserProducts: async function (req, res, next) {
     const userId = req.session.user_id;
+    console.log(userId);
     try {
       //引用修改后的查询用户nft的函数:返回的是nft的id
       const productids = await nftService.listNftByAddr('28a5c9ac133b4449ca38e9bdf7cacdce31079ef6b3ac2f0a080af83ecff98b36',userId);

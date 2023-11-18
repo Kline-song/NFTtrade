@@ -82,9 +82,9 @@ export default {
       privateKey: '',
     };
   },
-  created() {
-    this.getUserProducts();
-  },
+  // created() {
+  //   this.getUserProducts();
+  // },
   methods: {
 
     openSellDialog(productId) {
@@ -162,7 +162,7 @@ export default {
           alert('产品上传成功！');
           this.showModal2 = false;
           // 上传成功后刷新页面
-          window.location.reload();
+          // window.location.reload();
         } else {
           // Handle failure
           alert(`上传失败: ${response.data.message}`);

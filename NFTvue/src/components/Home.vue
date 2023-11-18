@@ -57,12 +57,12 @@ export default {
     };
   },
   // 在页面加载时获取待出售商品信息到猜你喜欢中
-  async created() {
-    this.fetchProducts();
+  // async created() {
+  //   this.fetchProducts();
 
-    // Fetch products every 5 seconds
-    this.timerId = setInterval(this.fetchProducts, 5000);
-  },
+  //   // Fetch products every 5 seconds
+  //   this.timerId = setInterval(this.fetchProducts, 5000);
+  // },
   computed: {
 
   },
