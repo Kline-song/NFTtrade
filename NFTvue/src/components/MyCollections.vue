@@ -36,13 +36,13 @@
       </el-dialog>
     </div>
     <ul>
-      <li v-for="item in collection" :key="item.id">
+      <li v-for="(item, id) in collection" :key="id">
         <div class="collection-item">
-          <img :src="getFullUrl(item.coverImage_url)" alt="藏品照片">
+          <img :src="getFullUrl(item.coverImgUrl)" alt="藏品照片">
           <div class="collection-info">
-            <h3>{{ item.product_name }}</h3>
-            <p>ID: {{ item.product_id }}</p>
-            <button class="sellbtn" @click="openSellDialog(item.product_id)">售出</button>
+            <h3>{{ item.name }}</h3>
+            <p>ID: {{ id }}</p>
+            <button class="sellbtn" @click="openSellDialog(id)">售出</button>
             <el-dialog v-model="showModal1" title="填写商品信息" @close="showModal1 = false">
               <el-form>
                 <el-form-item label="价格">
@@ -75,7 +75,7 @@ export default {
       price: '',
       productDescription: '',
       image: null,// 上传的图片
-      collection: [],
+      collection: {},
       fileType: null,
       metaData: null,
       isUploading: false, // 添加 isUploading 数据属性用于跟踪上传状态
@@ -94,7 +94,8 @@ export default {
     async getUserProducts() {
       try {
         // 此处设置了请求头，携带了 cookie，后续可以考虑将携带 cookie 的设置存储到 main.js 中
-        const response = await axios.get('http://localhost:3000/showProduct', { withCredentials: true });
+        var userId = sessionStorage.getItem("revAddress");
+        const response = await axios.post('http://localhost:3000/showOwnerProduct', {userId}, { withCredentials: true });
         if (response.data.code === 200) {
           this.collection = response.data.data;
         } else {
