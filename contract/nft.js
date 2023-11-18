@@ -2,30 +2,41 @@ const nft_rho = () => {
     return `new nftDataMapCh, nftOwnerListCh, nftLogListCh in {
         nftDataMapCh!({
             "id111": {
-                "name": "name111",
-                "description": "description111",
-                "metadataUrl": "metadataUrl111",
-                "coverImgUrl": "coverImgUrl111",
-                "creator": "creatorRevAddr111",
+                "name": "nft-dog1",
+                "description": "万圣节小狗图片",
+                "metadataUrl": "https://scarlet-defensive-swallow-675.mypinata.cloud/ipfs/QmVKzCUkqLTzts1oRtBj4kgLJodcK8wjknwhKe2pzXmgLf",
+                "coverImgUrl": "/covers/autumncontest-8311751_1280.jpg",
+                "creator": "1111212iFduAMTPf26BnEsQ4nBw7mjUtkPUH6qVmiJD9YtRHhHFnQs",
                 "price": 100
             },
             "id222": {
-                "name": "name222",
-                "description": Nil,
-                "metadataUrl": "metadataUrl222",
-                "coverImgUrl": "coverImgUrl222",
-                "creator": "creatorRevAddr222",
-                "price": 233
+
+                "name": "nft-garden",
+                "description": "一张花园的图片",
+                "metadataUrl": "https://scarlet-defensive-swallow-675.mypinata.cloud/ipfs/QmWeRBwWk3XnicuC96sstiVWhbKhJGfRa1MMJJ8tVZnag1",
+                "coverImgUrl": "/covers/garden-7833569_1280.jpg",
+                "creator": "1111212iFduAMTPf26BnEsQ4nBw7mjUtkPUH6qVmiJD9YtRHhHFnQs",
+                "price": -1
             },
+            "id333": {
+                "name": "video-test1",
+                "description": "一段动画",
+                "metadataUrl": "https://scarlet-defensive-swallow-675.mypinata.cloud/ipfs/QmSNgevwRQeJWeXKn9KxRb1rmqh6KoWjPTK5Gbn2kGx3CA",
+                "coverImgUrl": "/covers/8e8f171fccb53bfe2fb5a85f7c14452c7ab83d8a.jpg",
+                "creator": "1111212iFduAMTPf26BnEsQ4nBw7mjUtkPUH6qVmiJD9YtRHhHFnQs",
+                "price": 124
+            }
         })|
         nftOwnerListCh!([
-            ["id111", "RevAddr114"],
-            ["id222", "creatorRevAddr222"]
+            ["id111", "1111212iFduAMTPf26BnEsQ4nBw7mjUtkPUH6qVmiJD9YtRHhHFnQs"],
+            ["id222", "1111212iFduAMTPf26BnEsQ4nBw7mjUtkPUH6qVmiJD9YtRHhHFnQs"],
+            ["id333", "1111212iFduAMTPf26BnEsQ4nBw7mjUtkPUH6qVmiJD9YtRHhHFnQs"]
         ])|
         nftLogListCh!([
-            ["id111", "", "RevAddr112", 111, "20231113"],
-            ["id111", "RevAddr112", "RevAddr114", 111, "20231114"],
-            ["id222", "", "creatorRevAddr222", 222, "20231114"]
+            ["id111", "", "111121dcgHRsTCe9k4EEotFdcRM1aw5GCEPmysUKvcGuoosehQrUFL", 111, "20231113"],
+            ["id111", "111121dcgHRsTCe9k4EEotFdcRM1aw5GCEPmysUKvcGuoosehQrUFL", "1111212iFduAMTPf26BnEsQ4nBw7mjUtkPUH6qVmiJD9YtRHhHFnQs", 111, "20231114"],
+            ["id222", "", "1111212iFduAMTPf26BnEsQ4nBw7mjUtkPUH6qVmiJD9YtRHhHFnQs", 222, "20231114"],
+            ["id333", "", "1111212iFduAMTPf26BnEsQ4nBw7mjUtkPUH6qVmiJD9YtRHhHFnQs", 111, "20231113"]
         ])|
     
         contract @"getNftDataMap"(returnCh) = {
@@ -269,7 +280,7 @@ const nft_rho = () => {
         }|
     
         // 转移NFT
-        contract @"transferNft"(@id, @from, @timestamp, returnCh) = {
+        contract @"transferNft"(@id, @timestamp, returnCh) = {
             // 检查id是否出售
             new priceCh in {
                 @"priceOf"!(id, *priceCh)|
@@ -278,45 +289,24 @@ const nft_rho = () => {
                         // 若价格不大于0，不出售，返回错误码-1
                         returnCh!(-1)
                     } else {
-                        // 若出售，检查from是否是NFT的owner
+                        // 若出售，获取NFT的owner
                         new ownerCh in {
                             @"ownerOf"!(id, *ownerCh)|
                             for (@owner <- ownerCh) {
-                                if (owner == from) {
-                                    // 尝试转账
-                                    new transferRevResultCh in {
-                                        @"transferRev"!(from, price, *transferRevResultCh)|
-                                        for (@transferRevResult <- transferRevResultCh) {
-                                            match transferRevResult {
-                                                true => {
-                                                    // 若转账成功
-                                                    new deployerRevAddrCh, resultCh in {
-                                                        @"getDeployerRevAddr"!(*deployerRevAddrCh)|
-                                                        for (@deployerRevAddr <- deployerRevAddrCh) {
-                                                            @"updateNftOwner"!(id, deployerRevAddr, *resultCh)|
-                                                            @"updateNftPrice"!(id, -1, *resultCh)|
-                                                            @"insertNftLog"!(id, from, deployerRevAddr, price, timestamp, *resultCh)|
-                                                            returnCh!(200)
-                                                        }
-                                                    }
-                                                }
-                                                false => {
-                                                    // 若转账失败，返回错误码-3
-                                                    returnCh!(-3)
-                                                }
-                                            }
-                                        }
+                                new deployerRevAddrCh, resultCh in {
+                                    @"getDeployerRevAddr"!(*deployerRevAddrCh)|
+                                    for (@deployerRevAddr <- deployerRevAddrCh) {
+                                        @"updateNftOwner"!(id, deployerRevAddr, *resultCh)|
+                                        @"updateNftPrice"!(id, -1, *resultCh)|
+                                        @"insertNftLog"!(id, owner, deployerRevAddr, price, timestamp, *resultCh)|
+                                        returnCh!(200)
                                     }
-                                } else {
-                                    // 若不是则返回错误码-2
-                                    returnCh!(-2)
-                                }
+                                }    
                             }
                         }
                     }
                 }
             }
-            
         }|
         
         contract @"getDeployerRevAddr"(returnCh) = {
@@ -383,6 +373,12 @@ const priceOf_rho = (id) => {
     }`;
 }
 
+const transferRev_rho = (to, amount) => {
+    return `new returnCh in {
+        @"transferRev"!("${to}", ${amount}, *returnCh)
+    }`;
+}
+
 const listNftByAddr_rho = (addr) => {
     return `new returnCh in {
         @"listNftByAddr"!("${addr}", *returnCh)
@@ -407,12 +403,30 @@ const mint_rho = (id, name, description, metadataUrl, coverImgUrl, timestamp) =>
     }`;
 }
 
+
+const listNftLogById_rho = (id) => {
+    return `new returnCh in {
+        @"listNftLogById"!("${id}", *returnCh)
+    }`;
+}
+
+const insertNftLog_rho = (id, from, to, price, timestamp) => {
+    return `new returnCh in {
+        @"insertNftLog"!("${id}", "${from}", "${to}", ${price}, "${timestamp}", *returnCh)
+    }`;
+}
+
+const transferNft_rho = (id, timestamp) => {
+    return `new returnCh in {
+        @"transferNft"!("${id}", "${timestamp}", *returnCh)
+    }`;
+}
+
 const getDescription_rho = (id) => {
     return `new returnCh in {
         @"getDescription"!("${id}", *returnCh)
     }`;
 }
-
 
 
 module.exports = {
@@ -425,6 +439,13 @@ module.exports = {
     listNftLogByAddr_rho,
     getDeployerRevAddr_rho,
     mint_rho,
+
+    listNftLogById_rho,
+    insertNftLog_rho,
+    transferNft_rho,
+    transferRev_rho,
+    ownerOf_rho
+
     getDescription_rho,
 
 };

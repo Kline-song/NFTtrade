@@ -62,7 +62,7 @@ const userController = {
   // 用户登录
   loginUser: async function (req, res, next) {
     const { revAddress } = req.body;
-
+    console.log(revAddress);
     if (!revAddress) {
       return res.status(400).json({ code: 400, message: 'address为必填项。' });
     }
