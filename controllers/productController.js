@@ -131,23 +131,27 @@ const productController = {
   getProductDetails: async function (req, res, next) {
     const productId = req.params.id;
     try {
-      //引用修改后的查询商品详情的函数
-      const productDetails = await nftService.getDescription('28a5c9ac133b4449ca38e9bdf7cacdce31079ef6b3ac2f0a080af83ecff98b36',productId);
-      //const productDetails = await Product.findById(productId);
-      // console.log(productDetails);
+      // 引用修改后的查询商品详情的函数
+      const productDetails = await orderService.dataOf_rho('28a5c9ac133b4449ca38e9bdf7cacdce31079ef6b3ac2f0a080af83ecff98b36', productId);
+
+      // 如果没有找到产品，返回 404 状态码
       if (!productDetails) {
-        // 如果没有找到产品，返回 404 状态码
         res.status(404).send({ message: 'Product not found' });
-      } else {
-        // 如果找到了产品，返回产品数据
-        res.send(productDetails);
+        return;
       }
+
+      // 构建映射，以 id 为键，productDetails 为值
+      const productMap = { [productId]: productDetails };
+
+      // 返回映射数据
+      res.send(productMap);
     } catch (error) {
       // 如果有错误，返回 500 状态码和错误信息
       console.error(error);
       res.status(500).send({ message: 'Server error' });
     }
   },
+
 
   // 列出用户的products(List products owned by a user)
   listUserProducts: async function (req, res, next) {
